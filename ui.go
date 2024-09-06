@@ -7,11 +7,19 @@ import (
 	"github.com/jroimartin/gocui"
 )
 
+type Event struct {
+	name string
+    x, y int
+    w, h int
+    body string
+}
+
 type Day struct {
 	name string
     x, y int
     w, h int
     body string
+    events []*Event
 }
 
 type Week struct {
@@ -22,8 +30,39 @@ type Week struct {
 	days []*Day
 }
 
-func newDay(name string, body string) *Day {
-    return &Day{name: name, x: 0, y: 0, w: 0, h: 0, body: body}
+func newEvent(name string, body string) *Event {
+    return &Event{name: name, x: 0, y: 0, w: 0, h: 0, body: body}
+}
+
+func (w *Event) Layout(g *gocui.Gui) error {
+    v, err := g.SetView(w.name, w.x, w.y, w.x+w.w, w.y+w.h)
+    if err != nil {
+        if err != gocui.ErrUnknownView {
+            return err
+        }
+        fmt.Fprintln(v, w.body)
+    }
+    return nil
+}
+
+func (e *Event) setPropreties(x, y, w, h int) {
+    e.x = x
+    e.y = y
+    e.w = w
+    e.h = h
+}
+
+func newDay(name string, events []*Event, body string) *Day {
+    return &Day{name: name, x: 0, y: 0, w: 0, h: 0, body: body, events: events}
+}
+
+func (w *Day) updateEventsView(g *gocui.Gui) {
+    y := w.y+2
+	for _, v := range w.events {
+        v.setPropreties(w.x+1, y, w.w-2, 5)
+        v.Layout(g)
+		y += 6
+	}
 }
 
 func (w *Day) Layout(g *gocui.Gui) error {
@@ -34,6 +73,8 @@ func (w *Day) Layout(g *gocui.Gui) error {
         }
         fmt.Fprintln(v, w.body)
     }
+    w.updateEventsView(g)
+
     return nil
 }
 
