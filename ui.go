@@ -2,16 +2,20 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
+	"strings"
 
 	"github.com/jroimartin/gocui"
 )
 
 type Event struct {
-	name string
-	x, y int
-	w, h int
-	body string
+	name     string
+	x, y     int
+	w, h     int
+	body     string
+	time     string
+	duration float64
 }
 
 type Day struct {
@@ -30,8 +34,23 @@ type Week struct {
 	days []*Day
 }
 
-func newEvent(name string, body string) *Event {
-	return &Event{name: name, x: 0, y: 0, w: 0, h: 0, body: body}
+func newEvent(name string, body string, time string, duration float64) *Event {
+	return &Event{name: name, x: 0, y: 0, w: 0, h: 0, body: body, time: time, duration: duration}
+}
+
+func (e *Event) durationToPosition() int {
+    return int(e.duration*2)
+}
+
+func (e *Event) timeToPosisition(buffer string) int {
+	lines := strings.Split(buffer, "\n")
+
+	for i, line := range lines {
+		if strings.Contains(line, e.time) {
+			return i
+		}
+	}
+	return 0
 }
 
 func (w *Event) Layout(g *gocui.Gui) error {
@@ -57,11 +76,18 @@ func newDay(name string, events []*Event, body string) *Day {
 }
 
 func (w *Day) updateEventsView(g *gocui.Gui) {
-	y := w.y + 2
+	week, err := g.View("w1")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	buffer := week.Buffer()
+
 	for _, v := range w.events {
-		v.setPropreties(w.x+1, y, w.w-2, 5)
+		y0 := v.timeToPosisition(buffer) + 1
+		h := v.durationToPosition()
+		v.setPropreties(w.x+1, y0, w.w-2, h)
 		v.Layout(g)
-		y += 6
 	}
 }
 
@@ -144,14 +170,14 @@ func (w *Week) writeTime(v *gocui.View) {
 	fmt.Fprintln(v)
 
 	initialTime := 13 - height/4
-    halfTime := 0
+	halfTime := 0
 	for i := 0; i < int(height)-2; i++ {
-        fmt.Fprintf(v, "%02dh%02d\n", initialTime, halfTime)
+		fmt.Fprintf(v, "%02dh%02d\n", initialTime, halfTime)
 		if halfTime == 0 {
-            halfTime = 30
+			halfTime = 30
 		} else {
 			initialTime++
-            halfTime = 0
+			halfTime = 0
 		}
 	}
 }

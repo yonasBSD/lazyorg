@@ -13,30 +13,37 @@ func main() {
 	}
 	defer g.Close()
 
-    events1 := []*Event{
-        newEvent("e1", "Tennis"),
-        newEvent("e2", "Cours"),
-    }
-
-    events2 := []*Event{
-        newEvent("e3", "Epicerie"),
-    }
-
-    events3 := []*Event{
-        newEvent("e4", "Ceci"),
-        newEvent("e5", "est"),
-        newEvent("e6", "un"),
-        newEvent("e7", "test"),
-    }
+	d1Events := []*Event{
+		newEvent("e1", "Frisbee", "18h", 1),
+	}
+	d2Events := []*Event{
+		newEvent("e2", "Archi\n2510", "10h30", 2),
+		newEvent("e3", "Astrophysique\n2840", "13h30", 1),
+	}
+	d3Events := []*Event{
+		newEvent("e4", "Tennis\nPeps", "16h30", 2),
+	}
+	d4Events := []*Event{
+		newEvent("e5", "Astrophysique\n3850", "13h30", 2),
+		newEvent("e6", "Russe\nEn Ligne", "15h30", 3),
+	}
+	d5Events := []*Event{
+		newEvent("e7", "Robotique\n2750", "9h30", 3),
+		newEvent("e8", "Archi\n2700", "13h30", 2),
+	}
+	d6Events := []*Event{
+		newEvent("e9", "Robotique\n3928", "10h30", 2),
+	}
+	d7Events := []*Event{}
 
 	days := []*Day{
-		newDay("d1", []*Event{}, "Lundi"),
-		newDay("d2", events1, "Mardi"),
-		newDay("d3", events2, "Mercredi"),
-		newDay("d4", []*Event{}, "Jeudi"),
-        newDay("d5", events3, "Vendredi"),
-		newDay("d6", []*Event{}, "Samedi"),
-		newDay("d7", []*Event{}, "Dimanche"),
+		newDay("d1", d1Events, "Dimanche"),
+		newDay("d2", d2Events, "Lundi"),
+		newDay("d3", d3Events, "Mardi"),
+		newDay("d4", d4Events, "Mercredi"),
+		newDay("d5", d5Events, "Jeudi"),
+		newDay("d6", d6Events, "Vendredi"),
+		newDay("d7", d7Events, "Samedi"),
 	}
 
 	w := newWeek("w1", days, "Semaine 1")
