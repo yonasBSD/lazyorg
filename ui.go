@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"strconv"
 	"strings"
 
 	"github.com/jroimartin/gocui"
@@ -31,6 +32,7 @@ type Week struct {
 	x, y int
 	w, h int
 	body string
+    calendar Calendar
 	days []*Day
 }
 
@@ -71,8 +73,8 @@ func (e *Event) setPropreties(x, y, w, h int) {
 	e.h = h
 }
 
-func newDay(name string, events []*Event, body string) *Day {
-	return &Day{name: name, x: 0, y: 0, w: 0, h: 0, body: body, events: events}
+func newDay(name string, events []*Event) *Day {
+	return &Day{name: name, x: 0, y: 0, w: 0, h: 0, body: "", events: events}
 }
 
 func (w *Day) updateEventsView(g *gocui.Gui) {
@@ -107,22 +109,24 @@ func (w *Day) Layout(g *gocui.Gui) error {
 	return nil
 }
 
-func (d *Day) setPropreties(x, y, w, h int) {
+func (d *Day) setPropreties(x, y, w, h int, body string) {
 	d.x = x
 	d.y = y
 	d.w = w
 	d.h = h
+    d.body = body
 }
 
-func newWeek(name string, days []*Day, body string) *Week {
-	return &Week{name: name, x: 0, y: 0, w: 0, h: 0, body: body, days: days}
+func newWeek(name string, days []*Day, body string, calendar Calendar) *Week {
+	return &Week{name: name, x: 0, y: 0, w: 0, h: 0, body: body, days: days, calendar: calendar}
 }
 
-func (we *Week) setPropreties(x, y, w, h int) {
+func (we *Week) setPropreties(x, y, w, h int, body string) {
 	we.x = x
 	we.y = y
 	we.w = w
 	we.h = h
+    we.body = body
 }
 
 func (w *Week) getDayDimensions() (width, border int) {
@@ -138,8 +142,8 @@ func (w *Week) updateDaysView(g *gocui.Gui, x0 int) {
 	width, border := w.getDayDimensions()
 	y0 := 2
 	x := x0
-	for _, v := range w.days {
-		v.setPropreties(x, y0, width, w.h-y0-1)
+	for i, v := range w.days {
+		v.setPropreties(x, y0, width, w.h-y0-1, w.calendar.daysName[i])
 		v.Layout(g)
 		x += width + border
 	}
@@ -148,7 +152,11 @@ func (w *Week) updateDaysView(g *gocui.Gui, x0 int) {
 func (w *Week) Layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
 
-	w.setPropreties(0, 0, maxX-1, maxY-1)
+    startDay := w.calendar.startWeek.Day()
+    endDay := w.calendar.endWeek.Day()
+
+    body := "Week " + strconv.Itoa(startDay) + " to " + strconv.Itoa(endDay)
+	w.setPropreties(0, 0, maxX-1, maxY-1, body)
 
 	view, err := g.SetView(w.name, w.x, w.y, w.x+w.w, w.y+w.h)
 	if err != nil {
@@ -171,10 +179,11 @@ func (w *Week) writeTime(v *gocui.View) {
 	fmt.Fprintln(v, w.body)
 	fmt.Fprintln(v)
 	fmt.Fprintln(v)
+	fmt.Fprintln(v)
 
 	initialTime := 13 - height/4
 	halfTime := 0
-	for i := 0; i < int(height)-2; i++ {
+	for i := 0; i < int(height)-3; i++ {
 		fmt.Fprintf(v, "%02dh%02d\n", initialTime, halfTime)
 		if halfTime == 0 {
 			halfTime = 30
