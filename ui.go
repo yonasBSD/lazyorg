@@ -39,14 +39,14 @@ func newEvent(name string, body string, time string, duration float64) *Event {
 }
 
 func (e *Event) durationToPosition() int {
-    return int(e.duration*2)
+	return int(e.duration * 2)
 }
 
 func (e *Event) timeToPosisition(buffer string) int {
 	lines := strings.Split(buffer, "\n")
 
 	for i, line := range lines {
-		if strings.Contains(line, e.time) {
+		if line == e.time {
 			return i
 		}
 	}
@@ -84,10 +84,13 @@ func (w *Day) updateEventsView(g *gocui.Gui) {
 	buffer := week.Buffer()
 
 	for _, v := range w.events {
-		y0 := v.timeToPosisition(buffer) + 1
+		y := v.timeToPosisition(buffer) + 1
 		h := v.durationToPosition()
-		v.setPropreties(w.x+1, y0, w.w-2, h)
-		v.Layout(g)
+		v.setPropreties(w.x+1, y, w.w-2, h)
+        v.Layout(g)
+        if y+h > w.y+w.h || y < w.y {
+            g.DeleteView(v.name)
+        }
 	}
 }
 
@@ -154,8 +157,8 @@ func (w *Week) Layout(g *gocui.Gui) error {
 		}
 	}
 
-	w.updateDaysView(g, 7)
 	w.writeTime(view)
+	w.updateDaysView(g, 7)
 
 	return nil
 }

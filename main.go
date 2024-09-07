@@ -14,7 +14,7 @@ func main() {
 	defer g.Close()
 
 	d1Events := []*Event{
-		newEvent("e1", "Frisbee", "18h", 1),
+		newEvent("e1", "Frisbee", "18h00", 1),
 	}
 	d2Events := []*Event{
 		newEvent("e2", "Archi\n2510", "10h30", 2),
