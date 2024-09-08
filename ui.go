@@ -152,10 +152,12 @@ func (w *Week) updateDaysView(g *gocui.Gui, x0 int) {
 func (w *Week) Layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
 
-    startDay := w.calendar.startWeek.Day()
-    endDay := w.calendar.endWeek.Day()
+    startDay := w.calendar.startDay.Day()
+    endDay := w.calendar.endDay.Day()
 
-    body := "Week " + strconv.Itoa(startDay) + " to " + strconv.Itoa(endDay)
+    month := w.calendar.endDay.Month().String()
+
+    body := "Week: " + strconv.Itoa(startDay) + " to " + strconv.Itoa(endDay) + ", " + month
 	w.setPropreties(0, 0, maxX-1, maxY-1, body)
 
 	view, err := g.SetView(w.name, w.x, w.y, w.x+w.w, w.y+w.h)
@@ -165,8 +167,8 @@ func (w *Week) Layout(g *gocui.Gui) error {
 		}
 	}
 
-	w.writeTime(view)
 	w.updateDaysView(g, 7)
+	w.writeTime(view)
 
 	return nil
 }
@@ -179,11 +181,10 @@ func (w *Week) writeTime(v *gocui.View) {
 	fmt.Fprintln(v, w.body)
 	fmt.Fprintln(v)
 	fmt.Fprintln(v)
-	fmt.Fprintln(v)
 
 	initialTime := 13 - height/4
 	halfTime := 0
-	for i := 0; i < int(height)-3; i++ {
+	for i := 0; i < int(height)-2; i++ {
 		fmt.Fprintf(v, "%02dh%02d\n", initialTime, halfTime)
 		if halfTime == 0 {
 			halfTime = 30
