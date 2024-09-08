@@ -15,22 +15,14 @@ func main() {
 
 	c := NewCalendar()
 
-	d1Events := []*Event{}
-	d2Events := []*Event{}
-	d3Events := []*Event{}
-	d4Events := []*Event{}
-	d5Events := []*Event{}
-	d6Events := []*Event{}
-	d7Events := []*Event{}
-
 	days := []*Day{
-		newDay("d1", d1Events),
-		newDay("d2", d2Events),
-		newDay("d3", d3Events),
-		newDay("d4", d4Events),
-		newDay("d5", d5Events),
-		newDay("d6", d6Events),
-		newDay("d7", d7Events),
+		newDay("d1", nil),
+		newDay("d2", nil),
+		newDay("d3", nil),
+		newDay("d4", nil),
+		newDay("d5", nil),
+		newDay("d6", nil),
+		newDay("d7", nil),
 	}
 
 	w := newWeek("week", days, "Semaine 1", c)
@@ -50,14 +42,14 @@ func initKeybindings(g *gocui.Gui, w *Week) error {
 		return err
 	}
 
-	if err := g.SetKeybinding("", gocui.KeyCtrlU, gocui.ModNone, // Change keybind
+	if err := g.SetKeybinding("", 'H', gocui.ModNone,
 		func(g *gocui.Gui, v *gocui.View) error {
 			return w.prevWeek(g)
 		}); err != nil {
 		return err
 	}
 
-	if err := g.SetKeybinding("", gocui.KeyCtrlO, gocui.ModNone, // Change keybind
+	if err := g.SetKeybinding("", 'L', gocui.ModNone,
 		func(g *gocui.Gui, v *gocui.View) error {
 			return w.nextWeek(g)
 		}); err != nil {
