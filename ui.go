@@ -32,7 +32,7 @@ type Week struct {
 	x, y int
 	w, h int
 	body string
-    calendar Calendar
+    calendar *Calendar
 	days []*Day
 }
 
@@ -78,7 +78,7 @@ func newDay(name string, events []*Event) *Day {
 }
 
 func (w *Day) updateEventsView(g *gocui.Gui) {
-	week, err := g.View("w1")
+	week, err := g.View("week") // Not good name hardcoded
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -117,7 +117,7 @@ func (d *Day) setPropreties(x, y, w, h int, body string) {
     d.body = body
 }
 
-func newWeek(name string, days []*Day, body string, calendar Calendar) *Week {
+func newWeek(name string, days []*Day, body string, calendar *Calendar) *Week {
 	return &Week{name: name, x: 0, y: 0, w: 0, h: 0, body: body, days: days, calendar: calendar}
 }
 
@@ -193,4 +193,28 @@ func (w *Week) writeTime(v *gocui.View) {
 			halfTime = 0
 		}
 	}
+}
+
+func (w *Week) prevWeek(g *gocui.Gui) error {
+    w.calendar.prevWeek()
+    for _, day := range w.days {
+        g.DeleteView(day.name)
+    }
+    err := w.Layout(g)
+    if err != nil {
+        return err
+    }
+    return nil
+}
+
+func (w *Week) nextWeek(g *gocui.Gui) error {
+    w.calendar.nextWeek()
+    for _, day := range w.days {
+        g.DeleteView(day.name)
+    }
+    err := w.Layout(g)
+    if err != nil {
+        return err
+    }
+    return nil
 }
