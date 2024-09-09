@@ -1,51 +1,54 @@
 package main
 
-import (
-	"strconv"
-	"time"
-)
+import "strconv"
 
 type Calendar struct {
-    currentDay time.Time
-	startDay time.Time
-	endDay   time.Time
-	daysName  []string
+    CurrentDay *Day
+    CurrentWeek *Week
 }
 
-func NewCalendar() *Calendar {
-    c := &Calendar{
-        daysName: make([]string, 7),
-    }
-    c.initWeek()
+func NewCalendar(currentDay *Day) *Calendar {
+    c := &Calendar{CurrentDay: currentDay, CurrentWeek: &Week{}}
+    c.CurrentWeek.InitDays()
+    c.UpdateWeek()
+
     return c
 }
 
-func (c *Calendar) initWeek() {
-	c.currentDay = time.Now()
-    c.updateWeek()
+func (c *Calendar) setWeekLimits () {
+    d := c.CurrentDay.Date
+
+	diffToSunday := d.Weekday()
+	diffToSaturday := 6 - d.Weekday()
+
+    c.CurrentWeek.StartDate = d.AddDate(0, 0, -int(diffToSunday))
+    c.CurrentWeek.EndDate = d.AddDate(0, 0, int(diffToSaturday))
 }
 
-func (c *Calendar) updateWeek() {
-    currentWeekDay := c.currentDay.Weekday()
+func (c *Calendar) FormatWeekBody () string {
+	startDay := c.CurrentWeek.StartDate
+	endDay := c.CurrentWeek.EndDate
+	month := endDay.Month().String()
 
-	diffToSunday := currentWeekDay
-	diffToSaturday := 6 - currentWeekDay
+	return "Week: " + strconv.Itoa(startDay.Day()) + " to " + strconv.Itoa(endDay.Day()) + ", " + month
+}
 
-	c.startDay = c.currentDay.AddDate(0, 0, -int(diffToSunday))
-	c.endDay = c.currentDay.AddDate(0, 0, int(diffToSaturday))
+func (c *Calendar) UpdateWeek() {
+    c.setWeekLimits()
 
-	for i := range c.daysName {
-        d := c.startDay.AddDate(0, 0, i)
-        c.daysName[i] = d.Weekday().String() + " - " + strconv.Itoa(d.Day())
+	for i := range c.CurrentWeek.Days {
+        d := c.CurrentWeek.StartDate.AddDate(0, 0, i)
+        c.CurrentWeek.Days[i].Date = d
+        // Add event logic
     }
 }
 
-func (c *Calendar) nextWeek() {
-    c.currentDay = c.currentDay.AddDate(0, 0, 7)
-    c.updateWeek()
+func (c *Calendar) UpdateToNextWeek() {
+    c.CurrentDay.Date = c.CurrentDay.Date.AddDate(0, 0, 7)
+    c.UpdateWeek()
 }
 
-func (c *Calendar) prevWeek() {
-    c.currentDay = c.currentDay.AddDate(0, 0, -7)
-    c.updateWeek()
+func (c *Calendar) UpdateToPrevWeek() {
+    c.CurrentDay.Date = c.CurrentDay.Date.AddDate(0, 0, -7)
+    c.UpdateWeek()
 }
