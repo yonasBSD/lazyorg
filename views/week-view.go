@@ -42,13 +42,13 @@ func (wv *WeekView) InitDayViews() {
 	wv.DayViews[6] = *NewDayView("saturday", 0, 0, 0, 0, "", nil)
 }
 
-func (wv *WeekView) calculateDayViewWidth() int {
-	width := math.Round(float64((wv.W-7)/7)) - border
+func (wv *WeekView) calculateDayViewWidth(x0 int) int {
+	width := math.Round(float64((wv.W-x0)/7)) - border
 	return int(width)
 }
 
 func (wv *WeekView) updateDayViews(g *gocui.Gui, x0 int, y0 int) error {
-	width := wv.calculateDayViewWidth()
+	width := wv.calculateDayViewWidth(x0)
 	height := wv.H - y0 - 1
 	x := x0
 	for _, v := range wv.DayViews {
@@ -65,12 +65,13 @@ func (wv *WeekView) Layout(g *gocui.Gui) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
+        v.Frame = false
 		v.Wrap = true
 		v.Autoscroll = true
 	}
 
-    y0 := wv.Y + 2
-    x0 := wv.X + 7
+    y0 := wv.Y + 3
+    x0 := wv.X + 9
 	err = wv.updateDayViews(g, x0, y0)
 	if err != nil {
 		return err
@@ -83,11 +84,10 @@ func (wv *WeekView) Layout(g *gocui.Gui) error {
 func (wv *WeekView) writeBody(v *gocui.View, y0 int) {
 	height := wv.H - y0 - 2
 
-    v.Title = wv.Body
 
 	v.Clear()
 
-	fmt.Fprintln(v)
+	fmt.Fprintln(v, wv.Body)
 	fmt.Fprintln(v)
 	fmt.Fprintln(v)
 
@@ -99,11 +99,12 @@ func (wv *WeekView) writeTimes(v *gocui.View, height int) {
 	halfTime := 0
 
 	for i := 0; i < int(height); i++ {
-		fmt.Fprintf(v, "%02dh%02d\n", initialTime, halfTime)
 
 		if halfTime == 0 {
+            fmt.Fprintf(v, "%02dh%02d -\n", initialTime, halfTime)
 			halfTime = 30
 		} else {
+            fmt.Fprintf(v, "%02dh%02d\n", initialTime, halfTime)
 			initialTime++
 			halfTime = 0
 		}

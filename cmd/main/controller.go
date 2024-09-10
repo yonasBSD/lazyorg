@@ -27,7 +27,7 @@ func (cc *CalendarController) Layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
 
     x0 := 0
-    y0 := 1
+    y0 := 0
 
     x1 := (maxX-1)-x0
     y1 := (maxY-1)-y0

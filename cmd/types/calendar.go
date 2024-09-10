@@ -30,7 +30,7 @@ func (c *Calendar) FormatWeekBody () string {
 	endDay := c.CurrentWeek.EndDate
 	month := endDay.Month().String()
 
-	return month + "-" + strconv.Itoa(startDay.Day()) + " to " + strconv.Itoa(endDay.Day())
+	return month + " " + strconv.Itoa(startDay.Day()) + " to " + strconv.Itoa(endDay.Day())
 }
 
 func (c *Calendar) UpdateWeek() {
