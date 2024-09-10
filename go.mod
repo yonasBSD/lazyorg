@@ -1,6 +1,6 @@
 module github.com/HubertBel/go-organizer
 
-go 1.23.0
+go 1.22.0
 
 require github.com/jroimartin/gocui v0.5.0
 

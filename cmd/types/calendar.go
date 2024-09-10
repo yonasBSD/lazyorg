@@ -1,4 +1,4 @@
-package main
+package types
 
 import "strconv"
 
@@ -30,7 +30,7 @@ func (c *Calendar) FormatWeekBody () string {
 	endDay := c.CurrentWeek.EndDate
 	month := endDay.Month().String()
 
-	return "Week: " + strconv.Itoa(startDay.Day()) + " to " + strconv.Itoa(endDay.Day()) + ", " + month
+	return month + "-" + strconv.Itoa(startDay.Day()) + " to " + strconv.Itoa(endDay.Day())
 }
 
 func (c *Calendar) UpdateWeek() {

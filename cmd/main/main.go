@@ -44,7 +44,6 @@ func initKeybindings(g *gocui.Gui, cc *CalendarController) error {
 		return err
 	}
 	return nil
-
 }
 
 func quit(g *gocui.Gui, v *gocui.View) error {

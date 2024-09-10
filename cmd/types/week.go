@@ -1,37 +1,11 @@
-package main
+package types
 
-import (
-	"strconv"
-	"time"
-)
-
-type Event struct {
-	Name     string
-	Time     time.Time
-	Duration time.Duration
-}
-
-type Day struct {
-	Date   time.Time
-	Events []Event
-}
+import "time"
 
 type Week struct {
 	StartDate time.Time
 	EndDate   time.Time
 	Days      []Day
-}
-
-func NewEvent(name string, time time.Time, duration time.Duration) *Event {
-	return &Event{Name: name, Time: time, Duration: duration}
-}
-
-func NewDay(date time.Time, events []Event) *Day {
-	return &Day{Date: date, Events: events}
-}
-
-func (d *Day) FormatDayBody() string {
-    return d.Date.Weekday().String() + " - " + strconv.Itoa(d.Date.Day())
 }
 
 func NewWeek(startDate time.Time, endDate time.Time, days []Day) *Week {
