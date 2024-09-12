@@ -17,3 +17,4 @@ func NewDay(date time.Time, events []Event) *Day {
 func (d *Day) FormatDayBody() string {
 	return d.Date.Weekday().String() + "-" + strconv.Itoa(d.Date.Day())
 }
+

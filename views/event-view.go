@@ -13,11 +13,15 @@ type EventView struct {
 	Body string
 }
 
+func NewEvenView(name string, x, y, w, h int, body string) *EventView {
+	return &EventView{Name: name, X: x, Y: y, W: w, H: h, Body: body}
+}
+
 func (ev *EventView) Layout(g *gocui.Gui) error {
 	v, err := g.SetView(ev.Name, ev.X, ev.Y, ev.X+ev.W, ev.Y+ev.H)
 	if err != nil {
 		if err != gocui.ErrUnknownView {
-            return err
+			return err
 		}
 		fmt.Fprintln(v, ev.Body)
 	}
@@ -30,37 +34,3 @@ func (ev *EventView) SetPropreties(x, y, w, h int) {
 	ev.W = w
 	ev.H = h
 }
-
-// func (w *Day) updateEventsView(g *gocui.Gui) {
-// 	week, err := g.View("week") // Not good name hardcoded
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-//
-// 	buffer := week.Buffer()
-//
-// 	for _, v := range w.events {
-// 		y := v.timeToPosisition(buffer) + 1
-// 		h := v.durationToPosition()
-// 		v.setPropreties(w.x+1, y, w.w-2, h)
-// 		v.Layout(g)
-// 		if y+h > w.y+w.h || y < w.y {
-// 			g.DeleteView(v.name)
-// 		}
-// 	}
-// }
-
-// func (e *Event) durationToPosition() int {
-// 	return int(e.duration * 2)
-// }
-//
-// func (e *Event) timeToPosisition(buffer string) int {
-// 	lines := strings.Split(buffer, "\n")
-//
-// 	for i, line := range lines {
-// 		if line == e.time {
-// 			return i
-// 		}
-// 	}
-// 	return 0
-// }

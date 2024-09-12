@@ -3,10 +3,20 @@ package main
 import (
 	"log"
 
+	"github.com/HubertBel/go-organizer/cmd/database"
 	"github.com/jroimartin/gocui"
 )
 
 func main() {
+    path := "../database/database.db"
+
+    database := database.Database{}
+    err := database.InitDatabase(path)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer database.Db.Close()
+
 	g, err := gocui.NewGui(gocui.OutputNormal)
 	if err != nil {
 		log.Panicln(err)
@@ -14,6 +24,8 @@ func main() {
 	defer g.Close()
 
     cc := NewCalendarController()
+    cc.InitDatabase(path)
+
 	g.SetManager(cc)
 
 	if err := initKeybindings(g, cc); err != nil {

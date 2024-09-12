@@ -1,6 +1,9 @@
 package types
 
-import "strconv"
+import (
+	"strconv"
+	"time"
+)
 
 type Calendar struct {
     CurrentDay *Day
@@ -51,4 +54,15 @@ func (c *Calendar) UpdateToNextWeek() {
 func (c *Calendar) UpdateToPrevWeek() {
     c.CurrentDay.Date = c.CurrentDay.Date.AddDate(0, 0, -7)
     c.UpdateWeek()
+}
+
+func (c *Calendar) GetDayFromTime(time time.Time) Day {
+    for _, v := range c.CurrentWeek.Days {
+        vYear, vMonth, vDay := v.Date.Date()
+        tYear, tMonth, tDay := time.Date()
+        if vYear == tYear && vMonth == tMonth && vDay == tDay {
+            return v
+        }
+    }
+    return Day{}
 }

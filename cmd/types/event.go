@@ -1,13 +1,20 @@
 package types
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type Event struct {
 	Name     string
 	Time     time.Time
-	Duration time.Duration
+	DurationHour float64
 }
 
-func NewEvent(name string, time time.Time, duration time.Duration) *Event {
-	return &Event{Name: name, Time: time, Duration: duration}
+func NewEvent(name string, time time.Time, duration float64) *Event {
+	return &Event{Name: name, Time: time, DurationHour: duration}
+}
+
+func (e *Event) FormatTime() string {
+    return fmt.Sprintf("%02dh%02d", e.Time.Hour(), e.Time.Minute())
 }
