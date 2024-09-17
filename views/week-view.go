@@ -32,7 +32,8 @@ type WeekView struct {
 
 func NewWeekView() *WeekView {
 	wv := &WeekView{Name: "week"}
-    wv.Calendar = types.NewCalendar(types.NewDay(time.Now(), nil))
+	wv.TimeView = *NewTimeView("time", 0, 0, 0, 0, "")
+	wv.Calendar = types.NewCalendar(types.NewDay(time.Now(), nil))
 	wv.initDayViews()
 	return wv
 }
@@ -47,22 +48,27 @@ func (wv *WeekView) SetProperties(x, y, w, h int) {
 }
 
 func (wv *WeekView) Layout(g *gocui.Gui) error {
-    maxX, maxY := g.Size()
-    wv.SetProperties(0, 0, maxX-1, maxY-1)
-    wv.Body = wv.Calendar.FormatWeekBody()
+	maxX, maxY := g.Size()
+	wv.SetProperties(0, 0, maxX-1, maxY-1)
+	wv.Body = wv.Calendar.FormatWeekBody()
 
 	v, err := g.SetView(wv.Name, wv.X, wv.Y, wv.X+wv.W, wv.Y+wv.H)
 	if err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-        v.Frame = false
+		v.Frame = false
 		v.Wrap = true
 		v.Autoscroll = true
 	}
 
-    v.Clear()
-    fmt.Fprintln(v, wv.Body)
+	v.Clear()
+	fmt.Fprintln(v, wv.Body)
+
+	err = wv.updateTimeView(g)
+	if err != nil {
+		return err
+	}
 
 	err = wv.updateDayViews(g)
 	if err != nil {
@@ -82,7 +88,6 @@ func (wv *WeekView) UpdateToPrevWeek() error {
 	return nil // TODO error handling
 }
 
-
 func (wv *WeekView) initDayViews() {
 	wv.DayViews = make([]DayView, 7)
 	wv.DayViews[0] = *NewDayView("sunday", 0, 0, 0, 0, "")
@@ -94,15 +99,30 @@ func (wv *WeekView) initDayViews() {
 	wv.DayViews[6] = *NewDayView("saturday", 0, 0, 0, 0, "")
 }
 
+func (wv *WeekView) updateTimeView(g *gocui.Gui) error {
+	x := wv.X
+	y := wv.Y + 3
+	w := 8
+	h := wv.H - wv.Y - 4
+
+	wv.TimeView.SetProperties(x, y, w, h)
+	err := wv.TimeView.Update(g)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (wv *WeekView) updateDayViews(g *gocui.Gui) error {
-	x := wv.X + 1 // Add time size
+	x := wv.X + wv.TimeView.W + 1
 	y := wv.Y + 3
 	w := calculateDayViewWidth(x, wv.W)
 	h := wv.H - wv.Y - 4
 
 	for i := range wv.DayViews {
 		wv.DayViews[i].SetProperties(x, y, w, h)
-        wv.DayViews[i].Body = wv.Calendar.CurrentWeek.Days[i].FormatDayBody()
+		wv.DayViews[i].Body = wv.Calendar.CurrentWeek.Days[i].FormatDayBody()
 
 		err := wv.DayViews[i].Update(g)
 		if err != nil {
