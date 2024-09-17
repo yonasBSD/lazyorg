@@ -42,7 +42,6 @@ func (c *Calendar) UpdateWeek() {
 	for i := range c.CurrentWeek.Days {
         d := c.CurrentWeek.StartDate.AddDate(0, 0, i)
         c.CurrentWeek.Days[i].Date = d
-        // Add event logic
     }
 }
 

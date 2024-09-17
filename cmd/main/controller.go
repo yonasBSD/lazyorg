@@ -91,18 +91,25 @@ func (cc *CalendarController) updateEventViews() error {
 }
 
 func (cc *CalendarController) AddTestEvents() error {
-    t := time.Date(2024, time.September, 11, 12, 0, 0, 0, time.Now().Location())
-	e := types.NewEvent("Archi", t, 2.0)
+    // t := time.Date(2024, time.September, 8, 12, 0, 0, 0, time.Now().Location())
+	// e := types.NewEvent("Archi", t, 2.0)
 
-	var err error
-	_, err = cc.Database.AddEvent(e)
-	if err != nil {
-		return err
-	}
+	// var err error
+	// _, err = cc.Database.AddEvent(e)
+	// if err != nil {
+	// 	return err
+	// }
 
-    t = time.Date(2024, time.September, 12, 12, 0, 0, 0, time.Now().Location())
-	e = types.NewEvent("Tennis", t, 1.5)
-	_, err = cc.Database.AddEvent(e)
+    // t = time.Date(2024, time.September, 12, 12, 0, 0, 0, time.Now().Location())
+	// e = types.NewEvent("Tennis", t, 1.5)
+	// _, err = cc.Database.AddEvent(e)
+	// if err != nil {
+	// 	return err
+	// }
+
+    t := time.Date(2024, time.September, 9, 15, 30, 0, 0, time.Now().Location())
+    e := types.NewEvent("Test", t, 1)
+    _, err := cc.Database.AddEvent(e)
 	if err != nil {
 		return err
 	}
