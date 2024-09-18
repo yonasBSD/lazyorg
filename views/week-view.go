@@ -73,10 +73,10 @@ func (wv *WeekView) Layout(g *gocui.Gui) error {
 		return err
 	}
 
-    err = wv.updateEvents(g)
-    if err != nil {
-        return err
-    }
+	err = wv.updateEvents(g)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -85,42 +85,42 @@ func (wv *WeekView) AddTestEvents() error {
 	t := time.Date(2024, time.September, 16, 10, 30, 0, 0, time.Now().Location())
 	e := types.NewEvent("Archi1", t, 2.0)
 
-    wv.Database.AddEvent(e)
+	wv.Database.AddEvent(e)
 
 	t = time.Date(2024, time.September, 16, 13, 30, 0, 0, time.Now().Location())
 	e = types.NewEvent("Astro1", t, 1.0)
 
-    wv.Database.AddEvent(e)
+	wv.Database.AddEvent(e)
 
 	t = time.Date(2024, time.September, 17, 16, 30, 0, 0, time.Now().Location())
 	e = types.NewEvent("Tennis", t, 2.0)
 
-    wv.Database.AddEvent(e)
+	wv.Database.AddEvent(e)
 
 	t = time.Date(2024, time.September, 18, 13, 30, 0, 0, time.Now().Location())
 	e = types.NewEvent("Astro2", t, 2.0)
 
-    wv.Database.AddEvent(e)
+	wv.Database.AddEvent(e)
 
 	t = time.Date(2024, time.September, 18, 15, 30, 0, 0, time.Now().Location())
 	e = types.NewEvent("Russe", t, 3.0)
 
-    wv.Database.AddEvent(e)
+	wv.Database.AddEvent(e)
 
 	t = time.Date(2024, time.September, 19, 9, 30, 0, 0, time.Now().Location())
 	e = types.NewEvent("Robotique", t, 3.0)
 
-    wv.Database.AddEvent(e)
+	wv.Database.AddEvent(e)
 
 	t = time.Date(2024, time.September, 19, 13, 30, 0, 0, time.Now().Location())
 	e = types.NewEvent("Archi2", t, 2.0)
 
-    wv.Database.AddEvent(e)
+	wv.Database.AddEvent(e)
 
 	t = time.Date(2024, time.September, 20, 10, 30, 0, 0, time.Now().Location())
 	e = types.NewEvent("Robotique lab", t, 2.0)
 
-    wv.Database.AddEvent(e)
+	wv.Database.AddEvent(e)
 
 	return nil
 }
@@ -150,7 +150,7 @@ func (wv *WeekView) updateEvents(g *gocui.Gui) error {
 		return err
 	}
 
-    wv.clearEventViews(g)
+	wv.clearEventViews(g)
 	wv.createEventViews()
 
 	err = wv.updateEventViews(g)
@@ -198,19 +198,19 @@ func (wv *WeekView) updateDayViews(g *gocui.Gui) error {
 
 func (wv *WeekView) clearEventViews(g *gocui.Gui) error {
 
-    for _, v := range wv.EventViews {
-        err := g.DeleteView(v.Name)
-        if err != nil && err != gocui.ErrUnknownView {
-            return err
-        }
-    }
-    wv.EventViews = nil
+	for _, v := range wv.EventViews {
+		err := g.DeleteView(v.Name)
+		if err != nil && err != gocui.ErrUnknownView {
+			return err
+		}
+	}
+	wv.EventViews = nil
 
-    return nil
+	return nil
 }
 
 func (wv *WeekView) createEventViews() {
-    var eventViews []EventView
+	var eventViews []EventView
 
 	for i, day := range wv.Calendar.CurrentWeek.Days {
 		for _, event := range day.Events {
@@ -219,13 +219,13 @@ func (wv *WeekView) createEventViews() {
 			w := wv.DayViews[i].W - 2
 			h := wv.TimeView.DurationToHeight(event.DurationHour)
 
-            if (y >= wv.DayViews[i].Y && y + h <= wv.DayViews[i].Y + wv.DayViews[i].H){
-                eventViews = append(eventViews, *NewEvenView(event.Name, x, y, w, h, event.Name))
-            }
+			if y > wv.DayViews[i].Y && y+h < wv.DayViews[i].Y+wv.DayViews[i].H {
+				eventViews = append(eventViews, *NewEvenView(event.Name, x, y, w, h, event.Name))
+			}
 		}
 	}
 
-    wv.EventViews = eventViews
+	wv.EventViews = eventViews
 }
 
 func (wv *WeekView) updateEventViews(g *gocui.Gui) error {
