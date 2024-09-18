@@ -2,6 +2,7 @@ package views
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jroimartin/gocui"
 )
@@ -42,6 +43,23 @@ func (tv *TimeView) Update(g *gocui.Gui) error {
 	return nil
 }
 
+func (tv *TimeView) TimeToPosition(t string) int {
+ 
+	lines := strings.Split(tv.Body, "\n")
+
+	for i, v := range lines {
+		if strings.Contains(v, t) {
+			return i + tv.Y + 1
+		}
+	}
+
+	return 0
+}
+
+func (tv *TimeView) DurationToHeight(d float64) int {
+	return int(d * 2)
+}
+
 func (tv *TimeView) updateBody(v *gocui.View) {
 	initialTime := 12 - tv.H/4
 	halfTime := 0
@@ -61,21 +79,3 @@ func (tv *TimeView) updateBody(v *gocui.View) {
 	fmt.Fprintln(v, tv.Body)
 }
 
-// func (wv *WeekView) WriteTimes(b *bytes.Buffer, height int) {
-//
-// 	for i := 0; i < int(height); i++ {
-//
-// 		if halfTime == 0 {
-//             s := fmt.Sprintf("%02dh%02d -\n", initialTime, halfTime)
-//             b.WriteString(s)
-//
-// 			halfTime = 30
-// 		} else {
-//             s := fmt.Sprintf("%02dh%02d\n", initialTime, halfTime)
-//             b.WriteString(s)
-//
-// 			initialTime++
-// 			halfTime = 0
-// 		}
-// 	}
-// }

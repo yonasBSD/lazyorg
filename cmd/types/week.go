@@ -23,3 +23,4 @@ func (w *Week) InitDays() {
     w.Days[5] = *NewDay(time.Time{}, nil)
     w.Days[6] = *NewDay(time.Time{}, nil)
 }
+

@@ -1,11 +1,10 @@
-package database
+package types
 
 import (
 	"database/sql"
 	"fmt"
 	"time"
 
-	"github.com/HubertBel/go-organizer/cmd/types"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -35,25 +34,25 @@ func (database *Database) InitDatabase(path string) error {
 	return nil
 }
 
-func (database *Database) AddEvent(e *types.Event) (int, error) {
+func (database *Database) AddEvent(e *Event) (int, error) {
 	result, err := database.Db.Exec(
 		`INSERT INTO events (name, time, duration) VALUES(?, ?, ?);`,
 		e.Name,
 		e.Time,
 		e.DurationHour)
 
-    id, err := result.LastInsertId()
-    if err != nil {
-        return 0, err
-    }
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
 
-    return int(id), nil
+	return int(id), nil
 }
 
-func (database *Database) GetEventsByDate(date time.Time) ([]types.Event, error) {
-    formattedDate := fmt.Sprintf("%04d-%02d-%02d", date.Year(), date.Month(), date.Day())
+func (database *Database) GetEventsByDate(date time.Time) ([]Event, error) {
+	formattedDate := fmt.Sprintf("%04d-%02d-%02d", date.Year(), date.Month(), date.Day())
 
-	var events []types.Event
+	var events []Event
 	rows, err := database.Db.Query(
 		`SELECT * FROM events WHERE date(time) = ?;`, formattedDate,
 	)
@@ -63,8 +62,8 @@ func (database *Database) GetEventsByDate(date time.Time) ([]types.Event, error)
 	defer rows.Close()
 
 	for rows.Next() {
-		var event types.Event
-        var id int // TODO handle id
+		var event Event
+		var id int // TODO handle id
 		if err := rows.Scan(
 			&id, &event.Name, &event.Time, &event.DurationHour,
 		); err != nil {

@@ -6,29 +6,29 @@ import (
 )
 
 type Calendar struct {
-    CurrentDay *Day
-    CurrentWeek *Week
+	CurrentDay  *Day
+	CurrentWeek *Week
 }
 
 func NewCalendar(currentDay *Day) *Calendar {
-    c := &Calendar{CurrentDay: currentDay, CurrentWeek: &Week{}}
-    c.CurrentWeek.InitDays()
-    c.UpdateWeek()
+	c := &Calendar{CurrentDay: currentDay, CurrentWeek: &Week{}}
+	c.CurrentWeek.InitDays()
+	c.UpdateWeek()
 
-    return c
+	return c
 }
 
-func (c *Calendar) setWeekLimits () {
-    d := c.CurrentDay.Date
+func (c *Calendar) setWeekLimits() {
+	d := c.CurrentDay.Date
 
 	diffToSunday := d.Weekday()
 	diffToSaturday := 6 - d.Weekday()
 
-    c.CurrentWeek.StartDate = d.AddDate(0, 0, -int(diffToSunday))
-    c.CurrentWeek.EndDate = d.AddDate(0, 0, int(diffToSaturday))
+	c.CurrentWeek.StartDate = d.AddDate(0, 0, -int(diffToSunday))
+	c.CurrentWeek.EndDate = d.AddDate(0, 0, int(diffToSaturday))
 }
 
-func (c *Calendar) FormatWeekBody () string {
+func (c *Calendar) FormatWeekBody() string {
 	startDay := c.CurrentWeek.StartDate
 	endDay := c.CurrentWeek.EndDate
 	month := endDay.Month().String()
@@ -37,31 +37,47 @@ func (c *Calendar) FormatWeekBody () string {
 }
 
 func (c *Calendar) UpdateWeek() {
-    c.setWeekLimits()
+	c.setWeekLimits()
 
 	for i := range c.CurrentWeek.Days {
-        d := c.CurrentWeek.StartDate.AddDate(0, 0, i)
-        c.CurrentWeek.Days[i].Date = d
-    }
+		d := c.CurrentWeek.StartDate.AddDate(0, 0, i)
+		c.CurrentWeek.Days[i].Date = d
+	}
+}
+
+func (c *Calendar) UpdateEventsFromDatabase(db *Database) error {
+	for i, v := range c.CurrentWeek.Days {
+		c.CurrentWeek.Days[i].Events = nil
+
+		var err error
+		events, err := db.GetEventsByDate(v.Date)
+		if err != nil {
+			return err
+		}
+
+		c.CurrentWeek.Days[i].Events = events
+	}
+
+	return nil
 }
 
 func (c *Calendar) UpdateToNextWeek() {
-    c.CurrentDay.Date = c.CurrentDay.Date.AddDate(0, 0, 7)
-    c.UpdateWeek()
+	c.CurrentDay.Date = c.CurrentDay.Date.AddDate(0, 0, 7)
+	c.UpdateWeek()
 }
 
 func (c *Calendar) UpdateToPrevWeek() {
-    c.CurrentDay.Date = c.CurrentDay.Date.AddDate(0, 0, -7)
-    c.UpdateWeek()
+	c.CurrentDay.Date = c.CurrentDay.Date.AddDate(0, 0, -7)
+	c.UpdateWeek()
 }
 
 func (c *Calendar) GetDayFromTime(time time.Time) Day {
-    for _, v := range c.CurrentWeek.Days {
-        vYear, vMonth, vDay := v.Date.Date()
-        tYear, tMonth, tDay := time.Date()
-        if vYear == tYear && vMonth == tMonth && vDay == tDay {
-            return v
-        }
-    }
-    return Day{}
+	for _, v := range c.CurrentWeek.Days {
+		vYear, vMonth, vDay := v.Date.Date()
+		tYear, tMonth, tDay := time.Date()
+		if vYear == tYear && vMonth == tMonth && vDay == tDay {
+			return v
+		}
+	}
+	return Day{}
 }

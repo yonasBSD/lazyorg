@@ -36,12 +36,5 @@ func (dv *DayView) Update(g *gocui.Gui) error {
 
 	v.Title = dv.Body
 
-	// for _, v := range dv.EventViews {
-    //     err := v.Layout(g)
-    //     if err != nil {
-    //         return err
-    //     }
-	// }
-
 	return nil
 }
