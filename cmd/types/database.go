@@ -24,8 +24,12 @@ func (database *Database) InitDatabase(path string) error {
 		`CREATE TABLE IF NOT EXISTS events (
             id INTEGER NOT NULL PRIMARY KEY,
             name TEXT NOT NULL,
+            description TEXT,
+            location TEXT,
             time DATETIME NOT NULL,
-            duration REAL
+            duration REAL NOT NULL,
+            frequency INTEGER,
+            occurence INTEGER
         )`)
 	if err != nil {
 		return err
@@ -34,19 +38,51 @@ func (database *Database) InitDatabase(path string) error {
 	return nil
 }
 
-func (database *Database) AddEvent(e *Event) (int, error) {
-	result, err := database.Db.Exec(
-		`INSERT INTO events (name, time, duration) VALUES(?, ?, ?);`,
-		e.Name,
-		e.Time,
-		e.DurationHour)
+func (database *Database) AddRecurringEvents(e *Event) ([]int, error) {
+    events := e.GetReccuringEvents()
+    ids := make([]int, 0, len(events))
 
-	id, err := result.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
+    tx, err := database.Db.Begin()
+    if err != nil {
+        return nil, err
+    }
 
-	return int(id), nil
+    stmt, err := tx.Prepare(`INSERT INTO events (name, description, location, time, duration, frequency, occurence) VALUES (?, ?, ?, ?, ?, ?, ?)`)
+    if err != nil {
+        tx.Rollback()
+        return nil, err
+    }
+    defer stmt.Close()
+
+    for _, event := range events {
+        result, err := stmt.Exec(
+            event.Name,
+            event.Description,
+            event.Location,
+            event.Time,
+            event.DurationHour,
+            event.FrequencyDay,
+            event.Occurence,
+        )
+        if err != nil {
+            tx.Rollback()
+            return nil, err
+        }
+
+        id, err := result.LastInsertId()
+        if err != nil {
+            tx.Rollback()
+            return nil, err
+        }
+
+        ids = append(ids, int(id))
+    }
+
+    if err := tx.Commit(); err != nil {
+        return nil, err
+    }
+
+    return ids, nil
 }
 
 func (database *Database) GetEventsByDate(date time.Time) ([]Event, error) {
@@ -63,9 +99,9 @@ func (database *Database) GetEventsByDate(date time.Time) ([]Event, error) {
 
 	for rows.Next() {
 		var event Event
-		var id int // TODO handle id
+		var id int
 		if err := rows.Scan(
-			&id, &event.Name, &event.Time, &event.DurationHour,
+			&id, &event.Name, &event.Description, &event.Location, &event.Time, &event.DurationHour, &event.FrequencyDay, &event.Occurence,
 		); err != nil {
 			return nil, err
 		}

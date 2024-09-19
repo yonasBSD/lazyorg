@@ -83,44 +83,32 @@ func (wv *WeekView) Layout(g *gocui.Gui) error {
 
 func (wv *WeekView) AddTestEvents() error {
 	t := time.Date(2024, time.September, 16, 10, 30, 0, 0, time.Now().Location())
-	e := types.NewEvent("Archi1", t, 2.0)
-
-	wv.Database.AddEvent(e)
-
-	t = time.Date(2024, time.September, 16, 13, 30, 0, 0, time.Now().Location())
-	e = types.NewEvent("Astro1", t, 1.0)
-
-	wv.Database.AddEvent(e)
-
-	t = time.Date(2024, time.September, 17, 16, 30, 0, 0, time.Now().Location())
-	e = types.NewEvent("Tennis", t, 2.0)
-
-	wv.Database.AddEvent(e)
-
-	t = time.Date(2024, time.September, 18, 13, 30, 0, 0, time.Now().Location())
-	e = types.NewEvent("Astro2", t, 2.0)
-
-	wv.Database.AddEvent(e)
-
-	t = time.Date(2024, time.September, 18, 15, 30, 0, 0, time.Now().Location())
-	e = types.NewEvent("Russe", t, 3.0)
-
-	wv.Database.AddEvent(e)
-
-	t = time.Date(2024, time.September, 19, 9, 30, 0, 0, time.Now().Location())
-	e = types.NewEvent("Robotique", t, 3.0)
-
-	wv.Database.AddEvent(e)
+	e := types.NewEvent("Archi", "Architecture des microprocesseurs", "PLT-2510", t, 2.0, 7, 13)
+	wv.Database.AddRecurringEvents(e)
 
 	t = time.Date(2024, time.September, 19, 13, 30, 0, 0, time.Now().Location())
-	e = types.NewEvent("Archi2", t, 2.0)
+	e = types.NewEvent("Archi", "Architecture des microprocesseurs", "PLT-2700", t, 2.0, 7, 13)
+	wv.Database.AddRecurringEvents(e)
 
-	wv.Database.AddEvent(e)
+	t = time.Date(2024, time.September, 16, 13, 30, 0, 0, time.Now().Location())
+	e = types.NewEvent("Astrophysique", "Introduction a l'astrophysique", "VCH-2840", t, 1.0, 7, 13)
+	wv.Database.AddRecurringEvents(e)
+
+	t = time.Date(2024, time.September, 18, 13, 30, 0, 0, time.Now().Location())
+	e = types.NewEvent("Astrophysique", "Introduction a l'astrophysique", "VCH-3850", t, 2.0, 7, 13)
+	wv.Database.AddRecurringEvents(e)
+
+	t = time.Date(2024, time.September, 18, 15, 30, 0, 0, time.Now().Location())
+	e = types.NewEvent("Russe", "Russe elementaire 1", "En ligne", t, 3.0, 7, 13)
+	wv.Database.AddRecurringEvents(e)
+
+	t = time.Date(2024, time.September, 19, 9, 30, 0, 0, time.Now().Location())
+	e = types.NewEvent("Robotique", "Introduction a la robotique mobile", "PLT-2765", t, 3.0, 7, 13)
+	wv.Database.AddRecurringEvents(e)
 
 	t = time.Date(2024, time.September, 20, 10, 30, 0, 0, time.Now().Location())
-	e = types.NewEvent("Robotique lab", t, 2.0)
-
-	wv.Database.AddEvent(e)
+	e = types.NewEvent("Robotique", "Introduction a la robotique mobile", "PLT-3928", t, 2.0, 7, 13)
+	wv.Database.AddRecurringEvents(e)
 
 	return nil
 }
@@ -219,8 +207,11 @@ func (wv *WeekView) createEventViews() {
 			w := wv.DayViews[i].W - 2
 			h := wv.TimeView.DurationToHeight(event.DurationHour)
 
+            name := fmt.Sprint(event.Name, event.Time.Day(), event.FormatHour())
+            body := fmt.Sprint(event.Name, " | ", event.Location)
+
 			if y > wv.DayViews[i].Y && y+h < wv.DayViews[i].Y+wv.DayViews[i].H {
-				eventViews = append(eventViews, *NewEvenView(event.Name, x, y, w, h, event.Name))
+				eventViews = append(eventViews, *NewEvenView(name, x, y, w, h, body))
 			}
 		}
 	}

@@ -25,7 +25,6 @@ func main() {
 	defer g.Close()
 
     wv := views.NewWeekView(&database)
-
 	g.SetManager(wv)
 
 	if err := initKeybindings(g, wv); err != nil {

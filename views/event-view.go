@@ -30,7 +30,9 @@ func (ev *EventView) Update(g *gocui.Gui) error {
 		if err != gocui.ErrUnknownView {
             return err
 		}
-		fmt.Fprintln(v, ev.Body)
+        v.Wrap = true
+        fmt.Fprintln(v, ev.Body)
 	}
+
 	return nil
 }
