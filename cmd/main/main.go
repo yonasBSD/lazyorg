@@ -56,6 +56,23 @@ func initKeybindings(g *gocui.Gui, wv *views.WeekView) error {
 		}); err != nil {
 		return err
 	}
+
+	if err := g.SetKeybinding("", 'a', gocui.ModNone,
+		func(g *gocui.Gui, v *gocui.View) error {
+            return wv.EvenPopupView.Update(g)
+		}); err != nil {
+		return err
+	}
+
+	if err := g.SetKeybinding(wv.EvenPopupView.Name, 'b', gocui.ModNone,
+		func(g *gocui.Gui, v *gocui.View) error {
+            if _, err := g.View(wv.EvenPopupView.Name); err == nil {
+                return wv.EvenPopupView.RemovePopup(g)
+            }
+            return nil
+		}); err != nil {
+		return err
+	}
 	return nil
 }
 

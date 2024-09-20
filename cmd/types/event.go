@@ -15,7 +15,7 @@ type Event struct {
 	Occurence    int
 }
 
-func NewEvent(name , description, location string, time time.Time, duration float64, frequency, occurence int) *Event {
+func NewEvent(name, description, location string, time time.Time, duration float64, frequency, occurence int) *Event {
     return &Event{Name: name, Description: description, Location: location, Time: time, DurationHour: duration, FrequencyDay: frequency, Occurence: occurence}
 }
 

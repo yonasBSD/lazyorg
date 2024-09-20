@@ -23,6 +23,8 @@ type WeekView struct {
 	DayViews   []DayView
 	EventViews []EventView
 
+	EvenPopupView EvenPopupView
+
 	Database *types.Database
 
 	Calendar *types.Calendar
@@ -33,6 +35,7 @@ func NewWeekView(db *types.Database) *WeekView {
 	wv.TimeView = *NewTimeView("time", 0, 0, 0, 0, "")
 	wv.EventViews = make([]EventView, 0)
 	wv.Calendar = types.NewCalendar(types.NewDay(time.Now(), nil))
+	wv.EvenPopupView = *NewEvenPopup("Popup", 0, 0, 0, 0)
 	wv.initDayViews()
 	return wv
 }
@@ -74,6 +77,11 @@ func (wv *WeekView) Layout(g *gocui.Gui) error {
 	}
 
 	err = wv.updateEvents(g)
+	if err != nil {
+		return err
+	}
+
+	err = wv.updatePopupView(g)
 	if err != nil {
 		return err
 	}
@@ -149,6 +157,30 @@ func (wv *WeekView) updateEvents(g *gocui.Gui) error {
 	return nil
 }
 
+func (wv *WeekView) updatePopupView(g *gocui.Gui) error {
+	w := wv.W / 2
+	h := wv.H / 3
+
+	x := wv.X + (wv.W/2 - w/2)
+	y := wv.Y + (wv.H/2 - h/2)
+
+	wv.EvenPopupView.SetProperties(x, y, w, h)
+
+	if _, err := g.View(wv.EvenPopupView.Name); err == gocui.ErrUnknownView {
+        return nil
+    }
+
+    if err := wv.EvenPopupView.Update(g); err != nil {
+        return err
+    }
+
+    if _, err := g.SetViewOnTop(wv.EvenPopupView.Name); err != nil {
+		return err
+    }
+
+	return nil
+}
+
 func (wv *WeekView) updateTimeView(g *gocui.Gui) error {
 	x := wv.X
 	y := wv.Y + 3
@@ -207,8 +239,8 @@ func (wv *WeekView) createEventViews() {
 			w := wv.DayViews[i].W - 2
 			h := wv.TimeView.DurationToHeight(event.DurationHour)
 
-            name := fmt.Sprint(event.Name, event.Time.Day(), event.FormatHour())
-            body := fmt.Sprint(event.Name, " | ", event.Location)
+			name := fmt.Sprint(event.Name, event.Time.Day(), event.FormatHour())
+			body := fmt.Sprint(event.Name, " | ", event.Location)
 
 			if y > wv.DayViews[i].Y && y+h < wv.DayViews[i].Y+wv.DayViews[i].H {
 				eventViews = append(eventViews, *NewEvenView(name, x, y, w, h, body))
