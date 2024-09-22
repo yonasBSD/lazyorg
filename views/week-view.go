@@ -81,10 +81,10 @@ func (wv *WeekView) Layout(g *gocui.Gui) error {
 		return err
 	}
 
-	err = wv.updatePopupView(g)
-	if err != nil {
-		return err
-	}
+    err = wv.updatePopupView(g)
+    if err != nil {
+        return err
+    }
 
 	return nil
 }
@@ -174,8 +174,8 @@ func (wv *WeekView) updatePopupView(g *gocui.Gui) error {
         return err
     }
 
-    if _, err := g.SetViewOnTop(wv.EvenPopupView.Name); err != nil {
-		return err
+    if err := wv.EvenPopupView.UpdateViewOnTop(g); err != nil {
+        return err
     }
 
 	return nil
