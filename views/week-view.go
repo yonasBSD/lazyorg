@@ -158,6 +158,10 @@ func (wv *WeekView) updateEvents(g *gocui.Gui) error {
 }
 
 func (wv *WeekView) updatePopupView(g *gocui.Gui) error {
+    if !wv.EvenPopupView.IsVisible {
+        return nil
+    }
+
 	w := wv.W / 2
 	h := wv.H / 3
 
@@ -165,10 +169,6 @@ func (wv *WeekView) updatePopupView(g *gocui.Gui) error {
 	y := wv.Y + (wv.H/2 - h/2)
 
 	wv.EvenPopupView.SetProperties(x, y, w, h)
-
-	if _, err := g.View(wv.EvenPopupView.Name); err == gocui.ErrUnknownView {
-        return nil
-    }
 
     if err := wv.EvenPopupView.Update(g); err != nil {
         return err

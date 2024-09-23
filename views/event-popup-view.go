@@ -1,61 +1,21 @@
 package views
 
 import (
-	"fmt"
-
 	"github.com/jroimartin/gocui"
 )
-
-type TextField struct {
-	Name string
-	X, Y int
-	W, H int
-	Body string
-}
-
-func NewTextField(name string, x, y, w, h int, body string) *TextField {
-	return &TextField{Name: name, X: x, Y: y, W: w, H: h, Body: body}
-}
-
-func (tf *TextField) SetProperties(x, y, w, h int) {
-	tf.X = x
-	tf.Y = y
-	tf.W = w
-	tf.H = h
-}
-
-func (tf *TextField) Update(g *gocui.Gui) error {
-	v, err := g.SetView(tf.Name, tf.X, tf.Y, tf.X+tf.W, tf.Y+tf.H)
-	if err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		v.Title = tf.Name
-		fmt.Fprintln(v, tf.Body)
-	}
-
-	return nil
-}
-
-type EvenPopupView struct {
-	Name string
-	X, Y int
-	W, H int
-
-	TextFields []TextField
-}
 
 func NewEvenPopup(name string, x, y, w, h int) *EvenPopupView {
 	epv := &EvenPopupView{Name: name, X: x, Y: y, W: w, H: h,
 		TextFields: []TextField{
-			*NewTextField("Name", 0, 0, 0, 0, ""),
-			*NewTextField("Time", 0, 0, 0, 0, ""),
-			*NewTextField("Location", 0, 0, 0, 0, ""),
-			*NewTextField("Duration", 0, 0, 0, 0, ""),
-			*NewTextField("Frequency", 0, 0, 0, 0, ""),
-			*NewTextField("Occurence", 0, 0, 0, 0, ""),
-			*NewTextField("Description", 0, 0, 0, 0, ""),
+            *NewTextField("Name", 0, 0, 0, 0, "", true),
+			*NewTextField("Time", 0, 0, 0, 0, "", false),
+			*NewTextField("Location", 0, 0, 0, 0, "", false),
+			*NewTextField("Duration", 0, 0, 0, 0, "1.0", false),
+			*NewTextField("Frequency", 0, 0, 0, 0, "7", false),
+			*NewTextField("Occurence", 0, 0, 0, 0, "1", false),
+			*NewTextField("Description", 0, 0, 0, 0, "", false),
 		},
+        IsVisible: false,
 	}
 
 	return epv
@@ -68,14 +28,30 @@ func (epv *EvenPopupView) SetProperties(x, y, w, h int) {
 	epv.H = h
 }
 
+func (epv *EvenPopupView) Show() {
+    epv.IsVisible = true
+}
+
+func (epv *EvenPopupView) Hide(g *gocui.Gui) error {
+    var err error
+
+    if epv.IsVisible {
+        err = epv.RemovePopup(g)
+    }
+
+    epv.IsVisible = false
+
+    return err
+}
+
 func (epv *EvenPopupView) Update(g *gocui.Gui) error {
+
 	v, err := g.SetView(epv.Name, epv.X, epv.Y, epv.X+epv.W, epv.Y+epv.H)
 	if err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
 		v.Title = "New event"
-		g.SetCurrentView(epv.Name)
 	}
 
 	epv.setTextFieldsProperties()
@@ -85,6 +61,7 @@ func (epv *EvenPopupView) Update(g *gocui.Gui) error {
 }
 
 func (epv *EvenPopupView) RemovePopup(g *gocui.Gui) error {
+
 	for _, v := range epv.TextFields {
 		err := g.DeleteView(v.Name)
 		if err != nil {
@@ -100,13 +77,47 @@ func (epv *EvenPopupView) RemovePopup(g *gocui.Gui) error {
 	return nil
 }
 
+func (epv *EvenPopupView) NextField() {
+    currentField := 0
+
+    for i, v := range epv.TextFields {
+        if v.IsSelected {
+            currentField = i
+        }
+    }
+
+    epv.TextFields[currentField].IsSelected = false
+    if currentField == len(epv.TextFields)-1 {
+        epv.TextFields[0].IsSelected = true
+    } else {
+        epv.TextFields[currentField+1].IsSelected = true
+    }
+}
+
+func (epv *EvenPopupView) PrevField() {
+    currentField := 0
+
+    for i, v := range epv.TextFields {
+        if v.IsSelected {
+            currentField = i
+        }
+    }
+
+    epv.TextFields[currentField].IsSelected = false
+    if currentField == 0 {
+        epv.TextFields[len(epv.TextFields)-1].IsSelected = true
+    } else {
+        epv.TextFields[currentField-1].IsSelected = true
+    }
+}
+
 func (epv *EvenPopupView) UpdateViewOnTop(g *gocui.Gui) error {
 	if _, err := g.SetViewOnTop(epv.Name); err != nil {
 		return err
 	}
 
-	for _, v := range epv.TextFields {
-		if _, err := g.SetViewOnTop(v.Name); err != nil {
+	for i := range epv.TextFields {
+		if _, err := g.SetViewOnTop(epv.TextFields[i].Name); err != nil {
 			return err
 		}
 	}
@@ -115,48 +126,74 @@ func (epv *EvenPopupView) UpdateViewOnTop(g *gocui.Gui) error {
 }
 
 func (epv *EvenPopupView) setTextFieldsProperties() {
+	const (
+		margin       = 2
+		padding      = 1
+		columnsCount = 3
+		rowsCount    = 3
+	)
 
-	b := 1
+	innerWidth := epv.W - 2*margin
+	innerHeight := epv.H - 2*margin
 
-	x := epv.X + 2
-	y := epv.Y + 1
-	w := (epv.W/3) - (2*b)
-	h := (epv.H/3) - (2*b)
+	fieldWidth := (innerWidth / columnsCount) - padding
+	fieldHeight := (innerHeight / rowsCount) - padding
 
-	// Name
-	epv.TextFields[0].SetProperties(x, y, w, h)
+	layout := []struct {
+		field    *TextField
+		row, col int
+		spanRows int
+	}{
+		{&epv.TextFields[0], 0, 0, 1}, // Name
+		{&epv.TextFields[1], 0, 1, 1}, // Time
+		{&epv.TextFields[2], 0, 2, 1}, // Location
+		{&epv.TextFields[3], 1, 0, 1}, // Duration
+		{&epv.TextFields[4], 1, 1, 1}, // Frequency
+		{&epv.TextFields[5], 1, 2, 1}, // Occurrence
+		{&epv.TextFields[6], 2, 0, 1}, // Description
+	}
 
-	// Time
-	x += w + b
-	epv.TextFields[1].SetProperties(x, y, w, h)
+	for _, item := range layout {
+		x := epv.X + margin + (item.col * (int(fieldWidth) + padding))
+		y := epv.Y + margin + (item.row * (fieldHeight + padding))
+		w := fieldWidth
+		h := fieldHeight * item.spanRows
 
-	// Location
-	x += w + b
-	epv.TextFields[2].SetProperties(x, y, w, h)
+		if item.field == &epv.TextFields[6] {
+			w = innerWidth
+			h = innerHeight - (2 * fieldHeight) - padding
+		}
 
-	// Duration
-	x = epv.X + 2
-	y += h + b
-	epv.TextFields[3].SetProperties(x, y, w, h)
+		maxX := epv.X + epv.W - 1
+		maxY := epv.Y + epv.H - 1
 
-	// Frequency
-	x += w + b
-	epv.TextFields[4].SetProperties(x, y, w, h)
+		if x < epv.X {
+			x = epv.X
+		}
+		if y < epv.Y {
+			y = epv.Y
+		}
+		if x+w > maxX {
+			w = maxX - x
+		}
+		if y+h > maxY {
+			h = maxY - y
+		}
 
-	// Occurence
-	x += w + b
-	epv.TextFields[5].SetProperties(x, y, w, h)
+		if w < 1 {
+			w = 1
+		}
+		if h < 1 {
+			h = 1
+		}
 
-	// Description
-	x = epv.X + 2
-	y += h + b
-    h = ((epv.Y+epv.H) - y) - 1
-	epv.TextFields[6].SetProperties(x, y, epv.W-4, h)
+		item.field.SetProperties(x, y, w, h)
+	}
 }
 
 func (epv *EvenPopupView) updateTextFields(g *gocui.Gui) error {
-	for _, v := range epv.TextFields {
-		if err := v.Update(g); err != nil {
+	for i := range epv.TextFields {
+		if err := epv.TextFields[i].Update(g); err != nil {
 			return err
 		}
 	}

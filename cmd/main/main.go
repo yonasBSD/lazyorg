@@ -24,6 +24,8 @@ func main() {
 	}
 	defer g.Close()
 
+    g.Cursor = true
+
     wv := views.NewWeekView(&database)
 	g.SetManager(wv)
 
@@ -59,16 +61,30 @@ func initKeybindings(g *gocui.Gui, wv *views.WeekView) error {
 
 	if err := g.SetKeybinding("", 'a', gocui.ModNone,
 		func(g *gocui.Gui, v *gocui.View) error {
-            return wv.EvenPopupView.Update(g)
+            wv.EvenPopupView.Show()
+            return nil
 		}); err != nil {
 		return err
 	}
 
-	if err := g.SetKeybinding(wv.EvenPopupView.Name, 'b', gocui.ModNone,
+	if err := g.SetKeybinding("", 'b', gocui.ModNone,
 		func(g *gocui.Gui, v *gocui.View) error {
-            if _, err := g.View(wv.EvenPopupView.Name); err == nil {
-                return wv.EvenPopupView.RemovePopup(g)
-            }
+            return wv.EvenPopupView.Hide(g)
+		}); err != nil {
+		return err
+	}
+
+	if err := g.SetKeybinding("", gocui.KeyTab, gocui.ModNone,
+		func(g *gocui.Gui, v *gocui.View) error {
+            wv.EvenPopupView.NextField()
+            return nil
+		}); err != nil {
+		return err
+	}
+
+	if err := g.SetKeybinding("", 'p', gocui.ModNone,
+		func(g *gocui.Gui, v *gocui.View) error {
+            wv.EvenPopupView.PrevField()
             return nil
 		}); err != nil {
 		return err
