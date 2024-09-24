@@ -45,7 +45,7 @@ func (tf *TextField) Update(g *gocui.Gui) error {
 	return nil
 }
 
-type EvenPopupView struct {
+type EventPopupView struct {
 	Name string
 	X, Y int
 	W, H int

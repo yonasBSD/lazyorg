@@ -9,14 +9,14 @@ import (
 )
 
 func main() {
-    path := "../../database.db"
+	path := "../../database.db"
 
-    database := types.Database{}
-    err := database.InitDatabase(path)
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer database.Db.Close()
+	database := types.Database{}
+	err := database.InitDatabase(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer database.Db.Close()
 
 	g, err := gocui.NewGui(gocui.OutputNormal)
 	if err != nil {
@@ -24,9 +24,9 @@ func main() {
 	}
 	defer g.Close()
 
-    g.Cursor = true
+	g.Cursor = true
 
-    wv := views.NewWeekView(&database)
+	wv := views.NewWeekView(&database)
 	g.SetManager(wv)
 
 	if err := initKeybindings(g, wv); err != nil {
@@ -45,50 +45,59 @@ func initKeybindings(g *gocui.Gui, wv *views.WeekView) error {
 
 	if err := g.SetKeybinding("", 'H', gocui.ModNone,
 		func(g *gocui.Gui, v *gocui.View) error {
-			wv.UpdateToPrevWeek()
-            return nil
+			if !wv.EventPopupView.IsVisible {
+                wv.UpdateToPrevWeek()
+			}
+			return nil
 		}); err != nil {
 		return err
 	}
 
 	if err := g.SetKeybinding("", 'L', gocui.ModNone,
 		func(g *gocui.Gui, v *gocui.View) error {
-			wv.UpdateToNextWeek()
-            return nil
+			if !wv.EventPopupView.IsVisible {
+                wv.UpdateToNextWeek()
+			}
+			return nil
 		}); err != nil {
 		return err
 	}
 
 	if err := g.SetKeybinding("", 'a', gocui.ModNone,
 		func(g *gocui.Gui, v *gocui.View) error {
-            wv.EvenPopupView.Show()
-            return nil
+			wv.EventPopupView.Show()
+			return nil
 		}); err != nil {
 		return err
 	}
 
 	if err := g.SetKeybinding("", 'b', gocui.ModNone,
 		func(g *gocui.Gui, v *gocui.View) error {
-            return wv.EvenPopupView.Hide(g)
+			return wv.EventPopupView.Hide(g)
 		}); err != nil {
 		return err
 	}
 
-	if err := g.SetKeybinding("", gocui.KeyTab, gocui.ModNone,
+	if err := g.SetKeybinding("", gocui.KeyArrowLeft, gocui.ModNone,
 		func(g *gocui.Gui, v *gocui.View) error {
-            wv.EvenPopupView.NextField()
+			if wv.EventPopupView.IsVisible {
+                wv.EventPopupView.PrevField()
+			}
             return nil
 		}); err != nil {
 		return err
 	}
 
-	if err := g.SetKeybinding("", 'p', gocui.ModNone,
+	if err := g.SetKeybinding("", gocui.KeyArrowRight, gocui.ModNone,
 		func(g *gocui.Gui, v *gocui.View) error {
-            wv.EvenPopupView.PrevField()
+			if wv.EventPopupView.IsVisible {
+                wv.EventPopupView.NextField()
+			}
             return nil
 		}); err != nil {
 		return err
 	}
+
 	return nil
 }
 
