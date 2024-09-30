@@ -2,27 +2,30 @@ package views
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/jroimartin/gocui"
 )
 
 type TimeView struct {
-	Properties UiProperties
-	Body       string
+	*BaseView
+	Body string
 }
 
-func NewTimeView(properties UiProperties, body string) *TimeView {
-	return &TimeView{Properties: properties, Body: body}
+func NewTimeView() *TimeView {
+	tv := &TimeView{
+        BaseView: NewBaseView("time"),
+	}
+
+	return tv
 }
 
 func (tv *TimeView) Update(g *gocui.Gui) error {
 	v, err := g.SetView(
-		tv.Properties.Name,
-		tv.Properties.X,
-		tv.Properties.Y,
-		tv.Properties.X+tv.Properties.W,
-		tv.Properties.Y+tv.Properties.H,
+		tv.Name,
+		tv.X,
+		tv.Y,
+		tv.X+tv.W,
+		tv.Y+tv.H,
 	)
 
 	if err != nil {
@@ -30,6 +33,7 @@ func (tv *TimeView) Update(g *gocui.Gui) error {
 			return err
 		}
 		v.Frame = false
+        v.FgColor = gocui.ColorGreen
 	}
 
 	v.Clear()
@@ -38,29 +42,17 @@ func (tv *TimeView) Update(g *gocui.Gui) error {
 	return nil
 }
 
-func (tv *TimeView) TimeToPosition(t string) int {
-
-	lines := strings.Split(tv.Body, "\n")
-
-	for i, v := range lines {
-		if strings.Contains(v, t) {
-			return i + tv.Properties.Y + 1
-		}
-	}
-
-	return 0
-}
 
 func (tv *TimeView) DurationToHeight(d float64) int {
 	return int(d * 2)
 }
 
 func (tv *TimeView) updateBody(v *gocui.View) {
-	initialTime := 12 - tv.Properties.H/4
+	initialTime := 12 - tv.H/4
 	halfTime := 0
 	tv.Body = ""
 
-	for range tv.Properties.H {
+	for range tv.H {
 		if halfTime == 0 {
 			tv.Body += fmt.Sprintf("%02dh%02d - \n", initialTime, halfTime)
 			halfTime = 30

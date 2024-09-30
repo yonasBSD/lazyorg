@@ -11,14 +11,16 @@ type Calendar struct {
 }
 
 func NewCalendar(currentDay *Day) *Calendar {
-	c := &Calendar{CurrentDay: currentDay, CurrentWeek: &Week{}}
-	c.CurrentWeek.InitDays()
+	c := &Calendar{CurrentDay: currentDay}
+
+	c.CurrentWeek = NewWeek()
 	c.UpdateWeek()
 
 	return c
 }
 
 func (c *Calendar) setWeekLimits() {
+	c.RoundTime()
 	d := c.CurrentDay.Date
 
 	diffToSunday := d.Weekday()
@@ -61,6 +63,20 @@ func (c *Calendar) UpdateEventsFromDatabase(db *Database) error {
 	return nil
 }
 
+func (c *Calendar) RoundTime() {
+	min := c.CurrentDay.Date.Minute()
+
+	if min >= 0 && min <= 14 {
+		c.CurrentDay.Date = c.CurrentDay.Date.Add(time.Minute * time.Duration(-min))
+	} else if min >= 14 && min <= 44 {
+		diff := 30 - min
+		c.CurrentDay.Date = c.CurrentDay.Date.Add(time.Minute * time.Duration(diff))
+	} else {
+		diff := 60 - min
+		c.CurrentDay.Date = c.CurrentDay.Date.Add(time.Minute * time.Duration(diff))
+	}
+}
+
 func (c *Calendar) UpdateToNextWeek() {
 	c.CurrentDay.Date = c.CurrentDay.Date.AddDate(0, 0, 7)
 	c.UpdateWeek()
@@ -71,7 +87,27 @@ func (c *Calendar) UpdateToPrevWeek() {
 	c.UpdateWeek()
 }
 
-func (c *Calendar) GetDayFromTime(time time.Time) Day {
+func (c *Calendar) UpdateToNextDay() {
+	c.CurrentDay.Date = c.CurrentDay.Date.AddDate(0, 0, 1)
+	c.UpdateWeek()
+}
+
+func (c *Calendar) UpdateToPrevDay() {
+	c.CurrentDay.Date = c.CurrentDay.Date.AddDate(0, 0, -1)
+	c.UpdateWeek()
+}
+
+func (c *Calendar) UpdateToNextTime() {
+	c.CurrentDay.Date = c.CurrentDay.Date.Add(time.Minute * time.Duration(30))
+	c.UpdateWeek()
+}
+
+func (c *Calendar) UpdateToPrevTime() {
+	c.CurrentDay.Date = c.CurrentDay.Date.Add(time.Minute * time.Duration(-30))
+	c.UpdateWeek()
+}
+
+func (c *Calendar) GetDayFromTime(time time.Time) *Day {
 	for _, v := range c.CurrentWeek.Days {
 		vYear, vMonth, vDay := v.Date.Date()
 		tYear, tMonth, tDay := time.Date()
@@ -79,5 +115,5 @@ func (c *Calendar) GetDayFromTime(time time.Time) Day {
 			return v
 		}
 	}
-	return Day{}
+	return &Day{}
 }

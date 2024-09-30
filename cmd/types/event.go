@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -33,6 +32,3 @@ func (e Event) GetReccuringEvents() []Event {
     return events
 }
 
-func (e *Event) FormatHour() string {
-	return fmt.Sprintf("%02dh%02d", e.Time.Hour(), e.Time.Minute())
-}

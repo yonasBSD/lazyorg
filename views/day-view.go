@@ -1,36 +1,48 @@
 package views
 
 import (
+	"time"
+
+	"github.com/HubertBel/go-organizer/cmd/types"
 	"github.com/jroimartin/gocui"
 )
 
 type DayView struct {
-	Properties UiProperties
-	Body       string
-	EventViews []EventView
+	*BaseView
+
+	Day *types.Day
 }
 
-func NewDayView(properties UiProperties, body string) *DayView {
-	return &DayView{Properties: properties, Body: body}
+func NewDayView(name string, d *types.Day) *DayView {
+	dv := &DayView{
+		BaseView: NewBaseView(name),
+		Day:      d,
+	}
+
+	return dv
 }
 
 func (dv *DayView) Update(g *gocui.Gui) error {
 	v, err := g.SetView(
-		dv.Properties.Name,
-		dv.Properties.X,
-		dv.Properties.Y,
-		dv.Properties.X+dv.Properties.W,
-		dv.Properties.Y+dv.Properties.H,
+		dv.Name,
+		dv.X,
+		dv.Y,
+		dv.X+dv.W,
+		dv.Y+dv.H,
 	)
 	if err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		v.Wrap = true
-		v.Autoscroll = true
 	}
 
-	v.Title = dv.Body
+	if dv.Day.Date.YearDay() == time.Now().YearDay() {
+		v.BgColor = gocui.ColorBlack
+	} else {
+		v.BgColor = gocui.ColorDefault
+	}
+
+	v.Title = dv.Day.FormatDayBody()
 
 	return nil
 }

@@ -10,8 +10,8 @@ type Day struct {
 	Events []Event
 }
 
-func NewDay(date time.Time, events []Event) *Day {
-	return &Day{Date: date, Events: events}
+func NewDay(date time.Time) *Day {
+	return &Day{Date: date}
 }
 
 func (d *Day) FormatDayBody() string {
