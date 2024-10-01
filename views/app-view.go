@@ -9,6 +9,9 @@ import (
 
 const (
 	MainViewWidth = 0.8
+
+	PopupWidth = LabelWidth + FieldWidth
+    PopupHeight = 16
 )
 
 type AppView struct {
@@ -27,6 +30,7 @@ func NewAppView(g *gocui.Gui) *AppView {
 
 	av.AddChild("main", NewMainView(c))
 	av.AddChild("side", NewSideView())
+	av.AddChild("popup", NewEvenPopup(g))
 
 	return av
 }
@@ -60,6 +64,10 @@ func (av *AppView) Update(g *gocui.Gui) error {
 		return err
 	}
 
+	if err = av.updateCursorPosition(g); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -87,6 +95,21 @@ func (av *AppView) UpdateToPrevTime() {
 	av.Calendar.UpdateToPrevTime()
 }
 
+func (av *AppView) ShowPopup(g *gocui.Gui) error {
+	if view, ok := av.GetChild("popup"); ok {
+		view.SetProperties(
+            av.X + (av.W/2 - PopupWidth/2),
+            av.Y + (av.H/2 - PopupHeight/2),
+			PopupWidth,
+			PopupHeight,
+		)
+		if popupView, ok := view.(*EventPopupView); ok {
+			return popupView.Show(g)
+		}
+	}
+    return nil
+}
+
 func (av *AppView) updateChildViewProperties() {
 	if mainView, ok := av.GetChild("main"); ok {
 		w := int(float64(av.W) * MainViewWidth)
@@ -106,4 +129,39 @@ func (av *AppView) updateChildViewProperties() {
 			av.H,
 		)
 	}
+}
+
+func (av *AppView) updateCursorPosition(g *gocui.Gui) error {
+	if view, ok := av.GetChild("popup"); ok {
+		if popupView, ok := view.(*EventPopupView); ok {
+            if popupView.IsVisible {
+                return nil
+            }
+		}
+	}
+
+	var mainView View
+	var ok bool
+
+	g.Cursor = true
+
+	if mainView, ok = av.GetChild("main"); !ok {
+		return gocui.ErrUnknownView
+	}
+
+	if view, ok := mainView.GetChild("time"); ok {
+		if timeView, ok := view.(*TimeView); ok {
+			y := types.TimeToPosition(av.Calendar.CurrentDay.Date, timeView.Body)
+
+			g.SetCurrentView(weekdayNames[av.Calendar.CurrentDay.Date.Weekday()])
+			g.CurrentView().SetCursor(1, y)
+
+		} else {
+			return gocui.ErrUnknownView
+		}
+	} else {
+		return gocui.ErrUnknownView
+	}
+
+	return nil
 }

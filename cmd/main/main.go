@@ -24,8 +24,6 @@ func main() {
 	}
 	defer g.Close()
 
-	g.Cursor = true
-
 	// wv := views.NewWeekView(&database)
 	av := views.NewAppView(g)
 	g.SetManager(av)

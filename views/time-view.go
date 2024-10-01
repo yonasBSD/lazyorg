@@ -36,7 +36,6 @@ func (tv *TimeView) Update(g *gocui.Gui) error {
         v.FgColor = gocui.ColorGreen
 	}
 
-	v.Clear()
 	tv.updateBody(v)
 
 	return nil
@@ -63,5 +62,6 @@ func (tv *TimeView) updateBody(v *gocui.View) {
 		}
 	}
 
+	v.Clear()
 	fmt.Fprintln(v, tv.Body)
 }

@@ -13,6 +13,13 @@ func InitKeybindings(g *gocui.Gui, av *AppView) error {
 		return err
 	}
 
+	if err := g.SetKeybinding("", 'a', gocui.ModNone,
+		func(g *gocui.Gui, v *gocui.View) error {
+            return av.ShowPopup(g)
+		}); err != nil {
+		return err
+	}
+
 	if err := g.SetKeybinding("", 'h', gocui.ModNone,
 		func(g *gocui.Gui, v *gocui.View) error {
 			av.UpdateToPrevDay()

@@ -5,6 +5,8 @@ import "github.com/jroimartin/gocui"
 type View interface {
 	Update(g *gocui.Gui) error
 	SetProperties(x, y, w, h int)
+    GetName() string
+    GetProperties() (int, int, int, int)
 	AddChild(name string, child View)
 	GetChild(name string) (View, bool)
 	Children() map[string]View
@@ -27,8 +29,12 @@ func (bv *BaseView) SetProperties(x, y, w, h int) {
 	bv.X, bv.Y, bv.W, bv.H = x, y, w, h
 }
 
-func (bv *BaseView) GetProperties() (string, int, int, int, int) {
-	return bv.Name, bv.X, bv.Y, bv.W, bv.H
+func (bv *BaseView) GetProperties() (int, int, int, int) {
+	return bv.X, bv.Y, bv.W, bv.H
+}
+
+func (bv *BaseView) GetName() string {
+	return bv.Name
 }
 
 func (bv *BaseView) AddChild(name string, child View) {

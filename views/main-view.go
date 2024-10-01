@@ -50,29 +50,9 @@ func (mv *MainView) Update(g *gocui.Gui) error {
 		return err
 	}
 
-    if err = mv.updateCursorPosition(g); err != nil {
-        return err
-    }
-
 	return nil
 }
 
-func (mv *MainView) updateCursorPosition(g *gocui.Gui) error {
-    if view, ok := mv.GetChild("time"); ok {
-        if timeView, ok := view.(*TimeView); ok {
-            y := types.TimeToPosition(mv.Calendar.CurrentDay.Date, timeView.Body)
-
-            g.SetCurrentView(weekdayNames[mv.Calendar.CurrentDay.Date.Weekday()])
-            g.CurrentView().SetCursor(1, y)
-        } else {
-            return gocui.ErrUnknownView
-        }
-    } else {
-        return gocui.ErrUnknownView
-    }
-
-    return nil
-}
 
 func (mv *MainView) updateChildViewProperties() {
 	if timeView, ok := mv.GetChild("time"); ok {
