@@ -48,8 +48,8 @@ func (c *Calendar) UpdateWeek() {
 }
 
 func (c *Calendar) UpdateEventsFromDatabase(db *Database) error {
-	for i, v := range c.CurrentWeek.Days {
-		c.CurrentWeek.Days[i].Events = nil
+	for _, v := range c.CurrentWeek.Days {
+        clear(v.Events)
 
 		var err error
 		events, err := db.GetEventsByDate(v.Date)
@@ -57,8 +57,9 @@ func (c *Calendar) UpdateEventsFromDatabase(db *Database) error {
 			return err
 		}
 
-		c.CurrentWeek.Days[i].Events = events
+		v.Events = events
 	}
+
 
 	return nil
 }

@@ -42,9 +42,6 @@ func (tv *TimeView) Update(g *gocui.Gui) error {
 }
 
 
-func (tv *TimeView) DurationToHeight(d float64) int {
-	return int(d * 2)
-}
 
 func (tv *TimeView) updateBody(v *gocui.View) {
 	initialTime := 12 - tv.H/4
@@ -53,10 +50,10 @@ func (tv *TimeView) updateBody(v *gocui.View) {
 
 	for range tv.H {
 		if halfTime == 0 {
-			tv.Body += fmt.Sprintf("%02dh%02d - \n", initialTime, halfTime)
+			tv.Body += fmt.Sprintf("%02d:%02d - \n", initialTime, halfTime)
 			halfTime = 30
 		} else {
-			tv.Body += fmt.Sprintf("%02dh%02d\n", initialTime, halfTime)
+			tv.Body += fmt.Sprintf("%02d:%02d\n", initialTime, halfTime)
 			initialTime++
 			halfTime = 0
 		}

@@ -24,6 +24,8 @@ type WeekView struct {
 
 	Calendar *types.Calendar
 
+    TimeView *TimeView
+
 	// DayViews []DayView
 	// EventViews []EventView
 
@@ -32,19 +34,20 @@ type WeekView struct {
 	// Database *types.Database
 }
 
-func NewWeekView(c *types.Calendar) *WeekView {
+func NewWeekView(c *types.Calendar, tv *TimeView) *WeekView {
 	wv := &WeekView{
 		BaseView: NewBaseView("week"),
 		Calendar: c,
+        TimeView: tv,
 	}
 
-	wv.AddChild(weekdayNames[0], NewDayView(weekdayNames[0], c.CurrentWeek.Days[0]))
-	wv.AddChild(weekdayNames[1], NewDayView(weekdayNames[1], c.CurrentWeek.Days[1]))
-	wv.AddChild(weekdayNames[2], NewDayView(weekdayNames[2], c.CurrentWeek.Days[2]))
-	wv.AddChild(weekdayNames[3], NewDayView(weekdayNames[3], c.CurrentWeek.Days[3]))
-	wv.AddChild(weekdayNames[4], NewDayView(weekdayNames[4], c.CurrentWeek.Days[4]))
-	wv.AddChild(weekdayNames[5], NewDayView(weekdayNames[5], c.CurrentWeek.Days[5]))
-	wv.AddChild(weekdayNames[6], NewDayView(weekdayNames[6], c.CurrentWeek.Days[6]))
+	wv.AddChild(weekdayNames[0], NewDayView(weekdayNames[0], c.CurrentWeek.Days[0], tv))
+	wv.AddChild(weekdayNames[1], NewDayView(weekdayNames[1], c.CurrentWeek.Days[1], tv))
+	wv.AddChild(weekdayNames[2], NewDayView(weekdayNames[2], c.CurrentWeek.Days[2], tv))
+	wv.AddChild(weekdayNames[3], NewDayView(weekdayNames[3], c.CurrentWeek.Days[3], tv))
+	wv.AddChild(weekdayNames[4], NewDayView(weekdayNames[4], c.CurrentWeek.Days[4], tv))
+	wv.AddChild(weekdayNames[5], NewDayView(weekdayNames[5], c.CurrentWeek.Days[5], tv))
+	wv.AddChild(weekdayNames[6], NewDayView(weekdayNames[6], c.CurrentWeek.Days[6], tv))
 
 	// wv.TimeView = *NewTimeView(UiProperties{Name: "time"}, "")
 	// wv.EventViews = make([]EventView, 0)

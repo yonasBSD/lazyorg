@@ -85,10 +85,10 @@ func (database *Database) AddRecurringEvents(e *Event) ([]int, error) {
     return ids, nil
 }
 
-func (database *Database) GetEventsByDate(date time.Time) ([]Event, error) {
+func (database *Database) GetEventsByDate(date time.Time) ([]*Event, error) {
 	formattedDate := fmt.Sprintf("%04d-%02d-%02d", date.Year(), date.Month(), date.Day())
 
-	var events []Event
+	var events []*Event
 	rows, err := database.Db.Query(
 		`SELECT * FROM events WHERE date(time) = ?;`, formattedDate,
 	)
@@ -105,7 +105,7 @@ func (database *Database) GetEventsByDate(date time.Time) ([]Event, error) {
 		); err != nil {
 			return nil, err
 		}
-		events = append(events, event)
+		events = append(events, &event)
 	}
 
 	return events, err

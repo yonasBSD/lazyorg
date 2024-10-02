@@ -22,8 +22,9 @@ func NewMainView(c *types.Calendar) *MainView {
         Calendar: c,
 	}
 
-	mv.AddChild("time", NewTimeView())
-	mv.AddChild("week", NewWeekView(c))
+    tv := NewTimeView()
+    mv.AddChild("time", tv)
+	mv.AddChild("week", NewWeekView(c, tv))
 	mv.AddChild("title", NewTitleView(c))
 
 	return mv
@@ -44,7 +45,7 @@ func (mv *MainView) Update(g *gocui.Gui) error {
         v.FgColor = gocui.AttrBold
 	}
 
-	mv.updateChildViewProperties()
+	mv.updateChildViewProperties(g)
 
 	if err = mv.UpdateChildren(g); err != nil {
 		return err
@@ -54,7 +55,7 @@ func (mv *MainView) Update(g *gocui.Gui) error {
 }
 
 
-func (mv *MainView) updateChildViewProperties() {
+func (mv *MainView) updateChildViewProperties(g *gocui.Gui) {
 	if timeView, ok := mv.GetChild("time"); ok {
 		y := mv.Y + TitleViewHeight + 1
 		timeView.SetProperties(
@@ -63,6 +64,7 @@ func (mv *MainView) updateChildViewProperties() {
 			TimeViewWidth,
 			mv.H-y-1,
 		)
+        timeView.Update(g) // TODO
 	}
 
 	if weekView, ok := mv.GetChild("week"); ok {

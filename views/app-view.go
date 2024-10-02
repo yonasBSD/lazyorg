@@ -17,20 +17,22 @@ const (
 type AppView struct {
 	*BaseView
 
+    Database *types.Database
 	Calendar *types.Calendar
 }
 
-func NewAppView(g *gocui.Gui) *AppView {
+func NewAppView(g *gocui.Gui, db *types.Database) *AppView {
 	c := types.NewCalendar(types.NewDay(time.Now()))
 
 	av := &AppView{
 		BaseView: NewBaseView("app"),
+        Database: db,
 		Calendar: c,
 	}
 
 	av.AddChild("main", NewMainView(c))
 	av.AddChild("side", NewSideView())
-	av.AddChild("popup", NewEvenPopup(g))
+	av.AddChild("popup", NewEvenPopup(g, c, db))
 
 	return av
 }
@@ -57,6 +59,10 @@ func (av *AppView) Update(g *gocui.Gui) error {
 		}
 		v.Frame = false
 	}
+
+    if err = av.Calendar.UpdateEventsFromDatabase(av.Database); err != nil {
+        return err
+    }
 
 	av.updateChildViewProperties()
 

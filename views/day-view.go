@@ -11,12 +11,14 @@ type DayView struct {
 	*BaseView
 
 	Day *types.Day
+    TimeView *TimeView
 }
 
-func NewDayView(name string, d *types.Day) *DayView {
+func NewDayView(name string, d *types.Day, tv *TimeView) *DayView {
 	dv := &DayView{
 		BaseView: NewBaseView(name),
 		Day:      d,
+        TimeView: tv,
 	}
 
 	return dv
@@ -44,5 +46,30 @@ func (dv *DayView) Update(g *gocui.Gui) error {
 
 	v.Title = dv.Day.FormatDayBody()
 
+	dv.updateChildViewProperties(g)
+
+	if err = dv.UpdateChildren(g); err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func (dv *DayView) updateChildViewProperties(g *gocui.Gui) error {
+    if err := dv.ClearChildren(g); err != nil {
+        return err
+    }
+
+	for _, v := range dv.Day.Events {
+		ev := NewEvenView(v.Name, v)
+
+		ev.X = dv.X + 1
+        ev.Y = types.TimeToPosition(v.Time, dv.TimeView.Body)
+		ev.W = dv.W - 2
+        ev.H = types.DurationToHeight(v.DurationHour)
+
+		dv.AddChild(v.Name, ev)
+	}
+
+    return nil
 }

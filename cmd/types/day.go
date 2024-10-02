@@ -7,7 +7,7 @@ import (
 
 type Day struct {
 	Date   time.Time
-	Events []Event
+	Events []*Event
 }
 
 func NewDay(date time.Time) *Day {

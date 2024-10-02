@@ -9,6 +9,7 @@ type View interface {
     GetProperties() (int, int, int, int)
 	AddChild(name string, child View)
 	GetChild(name string) (View, bool)
+    ClearChildren(g *gocui.Gui) error
 	Children() map[string]View
 }
 
@@ -35,6 +36,17 @@ func (bv *BaseView) GetProperties() (int, int, int, int) {
 
 func (bv *BaseView) GetName() string {
 	return bv.Name
+}
+
+func (bv *BaseView) ClearChildren(g *gocui.Gui) error {
+    for _, v := range bv.children {
+        if err := g.DeleteView(v.GetName()); err != nil {
+            return err
+        }
+    }
+    clear(bv.children)
+
+    return nil
 }
 
 func (bv *BaseView) AddChild(name string, child View) {
