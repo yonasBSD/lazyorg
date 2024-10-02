@@ -64,7 +64,7 @@ func (dv *DayView) updateChildViewProperties(g *gocui.Gui) error {
 		ev := NewEvenView(v.Name, v)
 
 		ev.X = dv.X + 1
-        ev.Y = types.TimeToPosition(v.Time, dv.TimeView.Body)
+        ev.Y = dv.Y + types.TimeToPosition(v.Time, dv.TimeView.Body) + 1
 		ev.W = dv.W - 2
         ev.H = types.DurationToHeight(v.DurationHour)
 
