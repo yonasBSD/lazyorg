@@ -1,6 +1,7 @@
 package views
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/HubertBel/go-organizer/cmd/types"
@@ -61,14 +62,15 @@ func (dv *DayView) updateChildViewProperties(g *gocui.Gui) error {
     }
 
 	for _, v := range dv.Day.Events {
-		ev := NewEvenView(v.Name, v)
+        name := fmt.Sprint(v.Name, v.Id)
+		ev := NewEvenView(name, v)
 
 		ev.X = dv.X + 1
         ev.Y = dv.Y + types.TimeToPosition(v.Time, dv.TimeView.Body) + 1
 		ev.W = dv.W - 2
         ev.H = types.DurationToHeight(v.DurationHour)
 
-		dv.AddChild(v.Name, ev)
+		dv.AddChild(name, ev)
 	}
 
     return nil

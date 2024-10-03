@@ -45,7 +45,7 @@ func (mv *MainView) Update(g *gocui.Gui) error {
         v.FgColor = gocui.AttrBold
 	}
 
-	mv.updateChildViewProperties(g)
+	mv.updateChildViewProperties()
 
 	if err = mv.UpdateChildren(g); err != nil {
 		return err
@@ -55,7 +55,7 @@ func (mv *MainView) Update(g *gocui.Gui) error {
 }
 
 
-func (mv *MainView) updateChildViewProperties(g *gocui.Gui) {
+func (mv *MainView) updateChildViewProperties() {
 	if timeView, ok := mv.GetChild("time"); ok {
 		y := mv.Y + TitleViewHeight + 1
 		timeView.SetProperties(
@@ -64,7 +64,6 @@ func (mv *MainView) updateChildViewProperties(g *gocui.Gui) {
 			TimeViewWidth,
 			mv.H-y-1,
 		)
-        timeView.Update(g) // TODO
 	}
 
 	if weekView, ok := mv.GetChild("week"); ok {

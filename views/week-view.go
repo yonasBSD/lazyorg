@@ -100,6 +100,7 @@ func (wv *WeekView) updateChildViewProperties() {
 
 	for _, weekday := range weekdayNames {
 		if dayView, ok := wv.GetChild(weekday); ok {
+
 			dayView.SetProperties(
 				x,
 				wv.Y+1,
@@ -107,6 +108,7 @@ func (wv *WeekView) updateChildViewProperties() {
 				wv.H-2,
 			)
 		}
+
 		x += w + padding
 	}
 }

@@ -12,7 +12,7 @@ type EventView struct {
 }
 
 func NewEvenView(name string, e *types.Event) *EventView {
-	return &EventView{
+	return &EventView {
         BaseView: NewBaseView(name),
 
         Event: e,

@@ -99,9 +99,8 @@ func (database *Database) GetEventsByDate(date time.Time) ([]*Event, error) {
 
 	for rows.Next() {
 		var event Event
-		var id int
 		if err := rows.Scan(
-			&id, &event.Name, &event.Description, &event.Location, &event.Time, &event.DurationHour, &event.FrequencyDay, &event.Occurence,
+			&event.Id, &event.Name, &event.Description, &event.Location, &event.Time, &event.DurationHour, &event.FrequencyDay, &event.Occurence,
 		); err != nil {
 			return nil, err
 		}

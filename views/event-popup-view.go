@@ -84,7 +84,13 @@ func (epv *EventPopupView) AddEvent(g *gocui.Gui, v *gocui.View) error {
 
 	event := types.NewEvent(name, description, location, time, duration, frequency, occurence)
 
-	epv.Database.AddRecurringEvents(event)
+    if _, err := epv.Database.AddRecurringEvents(event); err != nil {
+        return err
+    }
+
+    if err := epv.Calendar.UpdateEventsFromDatabase(epv.Database); err != nil {
+        return err
+    }
 
 	return epv.Close(g, v)
 }
