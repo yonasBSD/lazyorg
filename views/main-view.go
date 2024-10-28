@@ -22,9 +22,12 @@ func NewMainView(c *types.Calendar) *MainView {
         Calendar: c,
 	}
 
+    // TODO timeview accessible by everyone
     tv := NewTimeView()
     mv.AddChild("time", tv)
 	mv.AddChild("week", NewWeekView(c, tv))
+
+    // A mettre dans l'app view
 	mv.AddChild("title", NewTitleView(c))
 
 	return mv

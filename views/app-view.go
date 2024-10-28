@@ -30,9 +30,9 @@ func NewAppView(g *gocui.Gui, db *types.Database) *AppView {
 		Calendar: c,
 	}
 
+    av.AddChild("popup", NewEvenPopup(g, c, db))
 	av.AddChild("main", NewMainView(c))
 	av.AddChild("side", NewSideView())
-	av.AddChild("popup", NewEvenPopup(g, c, db))
 
 	return av
 }
@@ -70,7 +70,7 @@ func (av *AppView) Update(g *gocui.Gui) error {
 		return err
 	}
 
-	if err = av.updateCursorPosition(g); err != nil {
+	if err = av.updateCurrentView(g); err != nil {
 		return err
 	}
 
@@ -137,7 +137,7 @@ func (av *AppView) updateChildViewProperties() {
 	}
 }
 
-func (av *AppView) updateCursorPosition(g *gocui.Gui) error {
+func (av *AppView) updateCurrentView(g *gocui.Gui) error {
 	if view, ok := av.GetChild("popup"); ok {
 		if popupView, ok := view.(*EventPopupView); ok {
             if popupView.IsVisible {

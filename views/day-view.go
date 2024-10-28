@@ -11,15 +11,15 @@ import (
 type DayView struct {
 	*BaseView
 
-	Day *types.Day
-    TimeView *TimeView
+	Day      *types.Day
+	TimeView *TimeView
 }
 
 func NewDayView(name string, d *types.Day, tv *TimeView) *DayView {
 	dv := &DayView{
 		BaseView: NewBaseView(name),
 		Day:      d,
-        TimeView: tv,
+		TimeView: tv,
 	}
 
 	return dv
@@ -47,7 +47,9 @@ func (dv *DayView) Update(g *gocui.Gui) error {
 
 	v.Title = dv.Day.FormatDayBody()
 
-	dv.updateChildViewProperties(g)
+	if err = dv.updateChildViewProperties(g); err != nil {
+		return err
+	}
 
 	if err = dv.UpdateChildren(g); err != nil {
 		return err
@@ -57,21 +59,43 @@ func (dv *DayView) Update(g *gocui.Gui) error {
 }
 
 func (dv *DayView) updateChildViewProperties(g *gocui.Gui) error {
-    if err := dv.ClearChildren(g); err != nil {
-        return err
-    }
-
-	for _, v := range dv.Day.Events {
-        name := fmt.Sprint(v.Name, v.Id)
-		ev := NewEvenView(name, v)
-
-		ev.X = dv.X + 1
-        ev.Y = dv.Y + types.TimeToPosition(v.Time, dv.TimeView.Body) + 1
-		ev.W = dv.W - 2
-        ev.H = types.DurationToHeight(v.DurationHour)
-
-		dv.AddChild(name, ev)
+	eventViews := make(map[string]*EventView)
+	for pair := dv.children.Oldest(); pair != nil; pair = pair.Next() {
+		if eventView, ok := pair.Value.(*EventView); ok {
+			eventViews[eventView.GetName()] = eventView
+		}
 	}
 
-    return nil
+	for _, event := range dv.Day.Events {
+		x := dv.X + 1
+		y := dv.Y + types.TimeToPosition(event.Time, dv.TimeView.Body) + 1
+		w := dv.W - 2
+		h := types.DurationToHeight(event.DurationHour)
+
+		if (y + h) >= (dv.Y + dv.H) {
+			h = (dv.Y + dv.H) - y
+		}
+		if y <= dv.Y {
+			continue
+		}
+
+		viewName := fmt.Sprintf("%s-%d", event.Name, event.Id)
+		if existingView, exists := eventViews[viewName]; exists {
+			existingView.X, existingView.Y, existingView.W, existingView.H = x, y, w, h
+			delete(eventViews, viewName)
+		} else {
+			ev := NewEvenView(viewName, event)
+			ev.X, ev.Y, ev.W, ev.H = x, y, w, h
+			dv.AddChild(viewName, ev)
+		}
+	}
+
+	for viewName := range eventViews {
+		if err := g.DeleteView(viewName); err != nil && err != gocui.ErrUnknownView {
+			return err
+		}
+		dv.children.Delete(viewName)
+	}
+
+	return nil
 }

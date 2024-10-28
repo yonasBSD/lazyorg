@@ -62,10 +62,10 @@ func (epv *EventPopupView) Show(g *gocui.Gui) error {
 
 	form.SetCurrentItem(0)
 
-	form.Draw()
+    epv.Form = form
+    epv.IsVisible = true
 
-	epv.Form = form
-	epv.IsVisible = true
+	form.Draw()
 
 	return nil
 }
@@ -85,10 +85,6 @@ func (epv *EventPopupView) AddEvent(g *gocui.Gui, v *gocui.View) error {
 	event := types.NewEvent(name, description, location, time, duration, frequency, occurence)
 
     if _, err := epv.Database.AddRecurringEvents(event); err != nil {
-        return err
-    }
-
-    if err := epv.Calendar.UpdateEventsFromDatabase(epv.Database); err != nil {
         return err
     }
 

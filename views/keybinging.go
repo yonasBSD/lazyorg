@@ -68,40 +68,5 @@ func InitKeybindings(g *gocui.Gui, av *AppView) error {
 		return err
 	}
 
-	// if err := g.SetKeybinding("", 'a', gocui.ModNone,
-	// 	func(g *gocui.Gui, v *gocui.View) error {
-	// 		wv.EventPopupView.Show()
-	// 		return nil
-	// 	}); err != nil {
-	// 	return err
-	// }
-
-	// if err := g.SetKeybinding("", 'b', gocui.ModNone,
-	// 	func(g *gocui.Gui, v *gocui.View) error {
-	// 		return wv.EventPopupView.Hide(g)
-	// 	}); err != nil {
-	// 	return err
-	// }
-
-	// if err := g.SetKeybinding("", gocui.KeyArrowLeft, gocui.ModNone,
-	// 	func(g *gocui.Gui, v *gocui.View) error {
-	// 		if wv.EventPopupView.IsVisible {
-	//             wv.EventPopupView.PrevField()
-	// 		}
-	//         return nil
-	// 	}); err != nil {
-	// 	return err
-	// }
-
-	// if err := g.SetKeybinding("", gocui.KeyArrowRight, gocui.ModNone,
-	// 	func(g *gocui.Gui, v *gocui.View) error {
-	// 		if wv.EventPopupView.IsVisible {
-	//             wv.EventPopupView.NextField()
-	// 		}
-	//         return nil
-	// 	}); err != nil {
-	// 	return err
-	// }
-
 	return nil
 }

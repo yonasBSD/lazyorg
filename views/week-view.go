@@ -24,7 +24,7 @@ type WeekView struct {
 
 	Calendar *types.Calendar
 
-    TimeView *TimeView
+	TimeView *TimeView
 
 	// DayViews []DayView
 	// EventViews []EventView
@@ -36,11 +36,12 @@ type WeekView struct {
 
 func NewWeekView(c *types.Calendar, tv *TimeView) *WeekView {
 	wv := &WeekView{
-		BaseView: NewBaseView("week"),
-		Calendar: c,
-        TimeView: tv,
+        BaseView: NewBaseView("week"),
+        Calendar: c,
+		TimeView: tv,
 	}
 
+    // TODO
 	wv.AddChild(weekdayNames[0], NewDayView(weekdayNames[0], c.CurrentWeek.Days[0], tv))
 	wv.AddChild(weekdayNames[1], NewDayView(weekdayNames[1], c.CurrentWeek.Days[1], tv))
 	wv.AddChild(weekdayNames[2], NewDayView(weekdayNames[2], c.CurrentWeek.Days[2], tv))
@@ -112,7 +113,6 @@ func (wv *WeekView) updateChildViewProperties() {
 		x += w + padding
 	}
 }
-
 
 // func (wv *WeekView) updateEvents(g *gocui.Gui) error {
 // 	err := wv.Calendar.UpdateEventsFromDatabase(wv.Database)

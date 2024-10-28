@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/HubertBel/go-organizer/cmd/types"
-	_ "github.com/HubertBel/go-organizer/cmd/types"
 	"github.com/HubertBel/go-organizer/views"
 	"github.com/jroimartin/gocui"
 )
