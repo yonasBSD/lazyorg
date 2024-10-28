@@ -73,7 +73,11 @@ func (dv *DayView) updateChildViewProperties(g *gocui.Gui) error {
 		h := types.DurationToHeight(event.DurationHour)
 
 		if (y + h) >= (dv.Y + dv.H) {
-			h = (dv.Y + dv.H) - y
+            newHeight := (dv.Y + dv.H) - y
+            if newHeight <= 0{
+                continue
+            }
+            h = newHeight
 		}
 		if y <= dv.Y {
 			continue
