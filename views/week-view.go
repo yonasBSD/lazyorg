@@ -41,7 +41,6 @@ func NewWeekView(c *types.Calendar, tv *TimeView) *WeekView {
 		TimeView: tv,
 	}
 
-    // TODO
 	wv.AddChild(weekdayNames[0], NewDayView(weekdayNames[0], c.CurrentWeek.Days[0], tv))
 	wv.AddChild(weekdayNames[1], NewDayView(weekdayNames[1], c.CurrentWeek.Days[1], tv))
 	wv.AddChild(weekdayNames[2], NewDayView(weekdayNames[2], c.CurrentWeek.Days[2], tv))

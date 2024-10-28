@@ -8,16 +8,19 @@ import (
 )
 
 const (
-	MainViewWidth = 0.8
+	MainViewWidthRatio = 0.8
+	SideViewWidthRatio = 0.2
 
-	PopupWidth = LabelWidth + FieldWidth
-    PopupHeight = 16
+	TitleViewHeight    = 3
+
+	PopupWidth         = LabelWidth + FieldWidth
+	PopupHeight        = 16
 )
 
 type AppView struct {
 	*BaseView
 
-    Database *types.Database
+	Database *types.Database
 	Calendar *types.Calendar
 }
 
@@ -26,11 +29,12 @@ func NewAppView(g *gocui.Gui, db *types.Database) *AppView {
 
 	av := &AppView{
 		BaseView: NewBaseView("app"),
-        Database: db,
+		Database: db,
 		Calendar: c,
 	}
 
-    av.AddChild("popup", NewEvenPopup(g, c, db))
+	av.AddChild("title", NewTitleView(c))
+	av.AddChild("popup", NewEvenPopup(g, c, db))
 	av.AddChild("main", NewMainView(c))
 	av.AddChild("side", NewSideView())
 
@@ -60,9 +64,9 @@ func (av *AppView) Update(g *gocui.Gui) error {
 		v.Frame = false
 	}
 
-    if err = av.Calendar.UpdateEventsFromDatabase(av.Database); err != nil {
-        return err
-    }
+	if err = av.Calendar.UpdateEventsFromDatabase(av.Database); err != nil {
+		return err
+	}
 
 	av.updateChildViewProperties()
 
@@ -104,8 +108,8 @@ func (av *AppView) UpdateToPrevTime() {
 func (av *AppView) ShowPopup(g *gocui.Gui) error {
 	if view, ok := av.GetChild("popup"); ok {
 		view.SetProperties(
-            av.X + (av.W/2 - PopupWidth/2),
-            av.Y + (av.H/2 - PopupHeight/2),
+			av.X+(av.W/2-PopupWidth/2),
+			av.Y+(av.H/2-PopupHeight/2),
 			PopupWidth,
 			PopupHeight,
 		)
@@ -113,17 +117,28 @@ func (av *AppView) ShowPopup(g *gocui.Gui) error {
 			return popupView.Show(g)
 		}
 	}
-    return nil
+	return nil
 }
 
 func (av *AppView) updateChildViewProperties() {
-	if mainView, ok := av.GetChild("main"); ok {
-		w := int(float64(av.W) * MainViewWidth)
-		mainView.SetProperties(
-			av.X+(av.W-w),
+	mainViewWidth := int(float64(av.W) * MainViewWidthRatio)
+	sideViewWidth := int(float64(av.W) * SideViewWidthRatio)
+
+	if titleView, ok := av.GetChild("title"); ok {
+		titleView.SetProperties(
+			av.X+sideViewWidth+1,
 			av.Y,
-			w,
-			av.H,
+			mainViewWidth,
+			TitleViewHeight,
+		)
+	}
+
+	if mainView, ok := av.GetChild("main"); ok {
+		mainView.SetProperties(
+            av.X+sideViewWidth+1,
+			TitleViewHeight+1,
+			mainViewWidth,
+			av.H-TitleViewHeight-1,
 		)
 	}
 
@@ -131,7 +146,7 @@ func (av *AppView) updateChildViewProperties() {
 		weekView.SetProperties(
 			av.X,
 			av.Y,
-			int(float64(av.W)*(1-MainViewWidth)),
+			sideViewWidth,
 			av.H,
 		)
 	}
@@ -140,9 +155,9 @@ func (av *AppView) updateChildViewProperties() {
 func (av *AppView) updateCurrentView(g *gocui.Gui) error {
 	if view, ok := av.GetChild("popup"); ok {
 		if popupView, ok := view.(*EventPopupView); ok {
-            if popupView.IsVisible {
-                return nil
-            }
+			if popupView.IsVisible {
+				return nil
+			}
 		}
 	}
 
