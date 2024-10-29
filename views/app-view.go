@@ -13,10 +13,10 @@ var (
 )
 
 const (
-    TitleViewHeight = 3
+	TitleViewHeight = 3
 
-    PopupWidth  = LabelWidth + FieldWidth
-    PopupHeight = 16
+	PopupWidth  = LabelWidth + FieldWidth
+	PopupHeight = 16
 )
 
 type AppView struct {
@@ -27,8 +27,8 @@ type AppView struct {
 }
 
 func NewAppView(g *gocui.Gui, db *types.Database) *AppView {
-    now := time.Now()
-    t := time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0, 0, now.Location())
+	now := time.Now()
+	t := time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0, 0, now.Location())
 
 	c := types.NewCalendar(types.NewDay(t))
 
@@ -90,8 +90,8 @@ func (av *AppView) HideSideView(g *gocui.Gui) {
 	SideViewWidthRatio = 0.0
 	MainViewWidthRatio = 1.0
 
-    av.children.Delete("side")
-    g.DeleteView("side")
+	av.children.Delete("side")
+	g.DeleteView("side")
 }
 
 func (av *AppView) ShowSideView() {
@@ -117,12 +117,17 @@ func (av *AppView) UpdateToPrevDay() {
 	av.Calendar.UpdateToPrevDay()
 }
 
-func (av *AppView) UpdateToNextTime() {
-	av.Calendar.UpdateToNextTime()
+func (av *AppView) UpdateToNextTime(g *gocui.Gui) {
+    _, height := g.CurrentView().Size()
+	if _, y := g.CurrentView().Cursor(); y < height-1 {
+		av.Calendar.UpdateToNextTime()
+	}
 }
 
-func (av *AppView) UpdateToPrevTime() {
-	av.Calendar.UpdateToPrevTime()
+func (av *AppView) UpdateToPrevTime(g *gocui.Gui) {
+	if _, y := g.CurrentView().Cursor(); y > 0 {
+		av.Calendar.UpdateToPrevTime()
+	}
 }
 
 func (av *AppView) ShowPopup(g *gocui.Gui) error {
@@ -193,13 +198,9 @@ func (av *AppView) updateCurrentView(g *gocui.Gui) error {
 	if view, ok := mainView.GetChild("time"); ok {
 		if timeView, ok := view.(*TimeView); ok {
 			y := types.TimeToPosition(av.Calendar.CurrentDay.Date, timeView.Body)
-            if y == -1 {
-                y = 0
-            }
 
 			g.SetCurrentView(weekdayNames[av.Calendar.CurrentDay.Date.Weekday()])
 			g.CurrentView().SetCursor(1, y)
-
 		} else {
 			return gocui.ErrUnknownView
 		}
