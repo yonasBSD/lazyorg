@@ -18,8 +18,8 @@ func InitKeybindings(g *gocui.Gui, av *AppView) error {
 		handler func(*gocui.Gui, *gocui.View) error
 	}{
 		{'a', func(g *gocui.Gui, v *gocui.View) error { return av.ShowPopup(g) }},
-		{'h', func(g *gocui.Gui, v *gocui.View) error { av.UpdateToPrevDay(); return nil }},
-		{'l', func(g *gocui.Gui, v *gocui.View) error { av.UpdateToNextDay(); return nil }},
+		{'h', func(g *gocui.Gui, v *gocui.View) error { av.UpdateToPrevDay(g); return nil }},
+		{'l', func(g *gocui.Gui, v *gocui.View) error { av.UpdateToNextDay(g); return nil }},
 		{'j', func(g *gocui.Gui, v *gocui.View) error { av.UpdateToNextTime(g); return nil }},
 		{'k', func(g *gocui.Gui, v *gocui.View) error { av.UpdateToPrevTime(g); return nil }},
 		{'H', func(g *gocui.Gui, v *gocui.View) error { av.UpdateToPrevWeek(); return nil }},

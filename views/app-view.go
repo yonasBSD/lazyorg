@@ -67,7 +67,6 @@ func (av *AppView) Update(g *gocui.Gui) error {
 			return err
 		}
 		v.Frame = false
-		g.Cursor = true
 	}
 
 	if err = av.Calendar.UpdateEventsFromDatabase(av.Database); err != nil {
@@ -117,12 +116,14 @@ func (av *AppView) UpdateToPrevWeek() {
 	av.Calendar.UpdateToPrevWeek()
 }
 
-func (av *AppView) UpdateToNextDay() {
+func (av *AppView) UpdateToNextDay(g *gocui.Gui) {
 	av.Calendar.UpdateToNextDay()
+    av.updateCurrentView(g)
 }
 
-func (av *AppView) UpdateToPrevDay() {
+func (av *AppView) UpdateToPrevDay(g *gocui.Gui) {
 	av.Calendar.UpdateToPrevDay()
+    av.updateCurrentView(g)
 }
 
 func (av *AppView) UpdateToNextTime(g *gocui.Gui) {
@@ -193,6 +194,7 @@ func (av *AppView) updateCurrentView(g *gocui.Gui) error {
 			}
 		}
 	}
+    g.Cursor = true
 
 	viewName := weekdayNames[av.Calendar.CurrentDay.Date.Weekday()]
 
