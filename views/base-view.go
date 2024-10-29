@@ -14,6 +14,7 @@ type View interface {
 	GetChild(name string) (View, bool)
 	ClearChildren(g *gocui.Gui) error
 	Children() *orderedmap.OrderedMap[string, View]
+	FindChildView(name string) (View, bool)
 }
 
 type BaseView struct {
@@ -27,6 +28,10 @@ func NewBaseView(name string) *BaseView {
 		Name:     name,
 		children: orderedmap.New[string, View](),
 	}
+}
+
+func (bv *BaseView) Update(g *gocui.Gui) error {
+	return nil
 }
 
 func (bv *BaseView) SetProperties(x, y, w, h int) {
@@ -43,10 +48,11 @@ func (bv *BaseView) GetName() string {
 
 func (bv *BaseView) ClearChildren(g *gocui.Gui) error {
 	for pair := bv.children.Oldest(); pair != nil; pair = pair.Next() {
-		if err := g.DeleteView(pair.Value.GetName()); err != nil {
+		if err := g.DeleteView(pair.Value.GetName()); err != gocui.ErrUnknownView {
+			continue
+		} else {
 			return err
 		}
-		bv.children.Delete(pair.Key)
 	}
 
 	return nil
@@ -74,4 +80,20 @@ func (bv *BaseView) UpdateChildren(g *gocui.Gui) error {
 	}
 
 	return nil
+}
+
+func (bv *BaseView) FindChildView(name string) (View, bool) {
+	if view, ok := bv.GetChild(name); ok {
+		return view, ok
+	}
+
+	for pair := bv.children.Oldest(); pair != nil; pair = pair.Next() {
+		if childView, ok := pair.Value.(View); ok {
+			if view, ok := childView.FindChildView(name); ok {
+				return view, ok
+			}
+		}
+	}
+
+	return nil, false
 }

@@ -29,8 +29,8 @@ type WeekView struct {
 
 func NewWeekView(c *types.Calendar, tv *TimeView) *WeekView {
 	wv := &WeekView{
-        BaseView: NewBaseView("week"),
-        Calendar: c,
+		BaseView: NewBaseView("week"),
+		Calendar: c,
 		TimeView: tv,
 	}
 

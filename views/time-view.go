@@ -41,8 +41,6 @@ func (tv *TimeView) Update(g *gocui.Gui) error {
 	return nil
 }
 
-
-
 func (tv *TimeView) updateBody(v *gocui.View) {
 	initialTime := 12 - tv.H/4
 	halfTime := 0

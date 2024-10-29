@@ -41,7 +41,7 @@ func NewAppView(g *gocui.Gui, db *types.Database) *AppView {
 	av.AddChild("title", NewTitleView(c))
 	av.AddChild("popup", NewEvenPopup(g, c, db))
 	av.AddChild("main", NewMainView(c))
-	av.AddChild("side", NewSideView())
+	av.AddChild("side", NewSideView(c))
 
 	return av
 }
@@ -67,6 +67,7 @@ func (av *AppView) Update(g *gocui.Gui) error {
 			return err
 		}
 		v.Frame = false
+		g.Cursor = true
 	}
 
 	if err = av.Calendar.UpdateEventsFromDatabase(av.Database); err != nil {
@@ -86,19 +87,26 @@ func (av *AppView) Update(g *gocui.Gui) error {
 	return nil
 }
 
-func (av *AppView) HideSideView(g *gocui.Gui) {
+func (av *AppView) HideSideView(g *gocui.Gui) error {
 	SideViewWidthRatio = 0.0
 	MainViewWidthRatio = 1.0
 
+	if sideView, ok := av.GetChild("side"); ok {
+		if err := sideView.ClearChildren(g); err != nil {
+			return err
+		}
+	}
 	av.children.Delete("side")
 	g.DeleteView("side")
+
+	return nil
 }
 
 func (av *AppView) ShowSideView() {
 	SideViewWidthRatio = 0.2
 	MainViewWidthRatio = 0.8
 
-	av.AddChild("side", NewSideView())
+	av.AddChild("side", NewSideView(av.Calendar))
 }
 
 func (av *AppView) UpdateToNextWeek() {
@@ -118,7 +126,7 @@ func (av *AppView) UpdateToPrevDay() {
 }
 
 func (av *AppView) UpdateToNextTime(g *gocui.Gui) {
-    _, height := g.CurrentView().Size()
+	_, height := g.CurrentView().Size()
 	if _, y := g.CurrentView().Cursor(); y < height-1 {
 		av.Calendar.UpdateToNextTime()
 	}
@@ -186,26 +194,22 @@ func (av *AppView) updateCurrentView(g *gocui.Gui) error {
 		}
 	}
 
-	var mainView View
-	var ok bool
+	viewName := weekdayNames[av.Calendar.CurrentDay.Date.Weekday()]
 
-	g.Cursor = true
-
-	if mainView, ok = av.GetChild("main"); !ok {
-		return gocui.ErrUnknownView
-	}
-
-	if view, ok := mainView.GetChild("time"); ok {
+    if dayView, ok := av.FindChildView(viewName); ok {
+        if view, ok := av.FindChildView("hover"); ok {
+            if hoverView, ok := view.(*HoverView); ok {
+                hoverView.CurrentView = dayView
+            }
+        }
+    }
+	if view, ok := av.FindChildView("time"); ok {
 		if timeView, ok := view.(*TimeView); ok {
 			y := types.TimeToPosition(av.Calendar.CurrentDay.Date, timeView.Body)
 
-			g.SetCurrentView(weekdayNames[av.Calendar.CurrentDay.Date.Weekday()])
+			g.SetCurrentView(viewName)
 			g.CurrentView().SetCursor(1, y)
-		} else {
-			return gocui.ErrUnknownView
 		}
-	} else {
-		return gocui.ErrUnknownView
 	}
 
 	return nil
