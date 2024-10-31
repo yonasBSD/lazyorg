@@ -18,7 +18,7 @@ func main() {
 	}
 	defer database.Db.Close()
 
-	g, err := gocui.NewGui(gocui.OutputNormal)
+	g, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
 		log.Panicln(err)
 	}

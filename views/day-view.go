@@ -6,6 +6,7 @@ import (
 
 	"github.com/HubertBel/go-organizer/cmd/types"
 	"github.com/jroimartin/gocui"
+	"github.com/nsf/termbox-go"
 )
 
 type DayView struct {
@@ -39,13 +40,9 @@ func (dv *DayView) Update(g *gocui.Gui) error {
 		}
 	}
 
-	if dv.Day.Date.YearDay() == time.Now().YearDay() {
-		v.BgColor = gocui.ColorBlack
-	} else {
-		v.BgColor = gocui.ColorDefault
-	}
+    dv.updateBgColor(v)
 
-	v.Title = dv.Day.FormatDayBody()
+	v.Title = dv.Day.FormatTitle()
 
 	if err = dv.updateChildViewProperties(g); err != nil {
 		return err
@@ -56,6 +53,14 @@ func (dv *DayView) Update(g *gocui.Gui) error {
 	}
 
 	return nil
+}
+
+func (dv *DayView) updateBgColor(v *gocui.View) {
+	if dv.Day.Date.YearDay() == time.Now().YearDay() {
+		v.BgColor = gocui.Attribute(termbox.ColorDarkGray)
+	} else {
+		v.BgColor = gocui.ColorDefault
+	}
 }
 
 func (dv *DayView) updateChildViewProperties(g *gocui.Gui) error {

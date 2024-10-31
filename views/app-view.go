@@ -5,6 +5,7 @@ import (
 
 	"github.com/HubertBel/go-organizer/cmd/types"
 	"github.com/jroimartin/gocui"
+	"github.com/nsf/termbox-go"
 )
 
 var (
@@ -210,6 +211,7 @@ func (av *AppView) updateCurrentView(g *gocui.Gui) error {
 			y := types.TimeToPosition(av.Calendar.CurrentDay.Date, timeView.Body)
 
 			g.SetCurrentView(viewName)
+            g.CurrentView().BgColor = gocui.Attribute(termbox.ColorBlack)
 			g.CurrentView().SetCursor(1, y)
 		}
 	}

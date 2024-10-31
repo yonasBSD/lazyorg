@@ -58,8 +58,8 @@ func (c *Calendar) UpdateEventsFromDatabase(db *Database) error {
 		}
 
 		v.Events = events
+        v.SortEventsByTime()
 	}
-
 
 	return nil
 }
