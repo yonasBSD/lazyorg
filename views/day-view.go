@@ -108,3 +108,15 @@ func (dv *DayView) updateChildViewProperties(g *gocui.Gui) error {
 
 	return nil
 }
+
+func (dv* DayView) IsOnEvent(y int) (View, bool) {
+    y += dv.Y + 1
+	for pair := dv.children.Oldest(); pair != nil; pair = pair.Next() {
+		if eventView, ok := pair.Value.(*EventView); ok {
+            if y >= eventView.Y && y < (eventView.Y + eventView.H) {
+                return eventView, true
+            }
+		}
+	}
+    return nil, false
+}

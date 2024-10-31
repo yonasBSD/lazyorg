@@ -49,7 +49,7 @@ func (hv *HoverView) updateTitle(v *gocui.View) {
     if view, ok := hv.CurrentView.(*DayView); ok {
         v.Title = view.Day.FormatTimeAndHour()
     } else if view, ok := hv.CurrentView.(*EventView); ok {
-        v.Title = view.Event.FormatTitle()
+        v.Title = view.Event.FormatTimeAndName()
     }
 }
 
@@ -62,6 +62,7 @@ func (hv *HoverView) updateBody(v *gocui.View) {
         fmt.Fprintln(v, "---------")
         fmt.Fprintln(v, view.Day.FormatBody())
     } else if view, ok := hv.CurrentView.(*EventView); ok {
-        fmt.Fprintln(v, view.Event.FormatBody())
+        fmt.Fprintln(v, view.Y)
+        fmt.Fprintln(v, view.Y+view.H)
     }
 }

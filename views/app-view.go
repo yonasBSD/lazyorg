@@ -119,12 +119,12 @@ func (av *AppView) UpdateToPrevWeek() {
 
 func (av *AppView) UpdateToNextDay(g *gocui.Gui) {
 	av.Calendar.UpdateToNextDay()
-    av.updateCurrentView(g)
+	av.updateCurrentView(g)
 }
 
 func (av *AppView) UpdateToPrevDay(g *gocui.Gui) {
 	av.Calendar.UpdateToPrevDay()
-    av.updateCurrentView(g)
+	av.updateCurrentView(g)
 }
 
 func (av *AppView) UpdateToNextTime(g *gocui.Gui) {
@@ -195,26 +195,38 @@ func (av *AppView) updateCurrentView(g *gocui.Gui) error {
 			}
 		}
 	}
-    g.Cursor = true
 
 	viewName := weekdayNames[av.Calendar.CurrentDay.Date.Weekday()]
+	var y int
+    var hoveredView View
 
-    if dayView, ok := av.FindChildView(viewName); ok {
-        if view, ok := av.FindChildView("hover"); ok {
-            if hoverView, ok := view.(*HoverView); ok {
-                hoverView.CurrentView = dayView
-            }
-        }
-    }
 	if view, ok := av.FindChildView("time"); ok {
 		if timeView, ok := view.(*TimeView); ok {
-			y := types.TimeToPosition(av.Calendar.CurrentDay.Date, timeView.Body)
-
-			g.SetCurrentView(viewName)
-            g.CurrentView().BgColor = gocui.Attribute(termbox.ColorBlack)
-			g.CurrentView().SetCursor(1, y)
+			y = types.TimeToPosition(av.Calendar.CurrentDay.Date, timeView.Body)
 		}
 	}
+
+	if view, ok := av.FindChildView(viewName); ok {
+        if dayView, ok := view.(*DayView); ok {
+            if eventView, ok := dayView.IsOnEvent(y); ok {
+                hoveredView = eventView
+            } else {
+                hoveredView = dayView
+            }
+        }
+	}
+
+    if view, ok := av.FindChildView("hover"); ok {
+        if hoverView, ok := view.(*HoverView); ok {
+            hoverView.CurrentView = hoveredView
+            hoverView.Update(g)
+        }
+    }
+
+    g.Cursor = true
+	g.SetCurrentView(viewName)
+	g.CurrentView().BgColor = gocui.Attribute(termbox.ColorBlack)
+	g.CurrentView().SetCursor(1, y)
 
 	return nil
 }

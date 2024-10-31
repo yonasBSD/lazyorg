@@ -33,11 +33,11 @@ func (e *Event) FormatTimeAndName() string {
 }
 
 func (e *Event) FormatTitle() string {
-	return ""
+	return "title"
 }
 
 func (e *Event) FormatBody() string {
-	return ""
+	return "test"
 }
 
 func (e Event) GetReccuringEvents() []Event {
