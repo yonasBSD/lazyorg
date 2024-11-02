@@ -29,6 +29,9 @@ func (d *Day) FormatTimeAndHour() string {
 func (d *Day) FormatBody() string {
 	var sb strings.Builder
 
+    sb.WriteString("\n")
+    sb.WriteString("\nEvents :\n")
+    sb.WriteString( "---------\n")
 	for _, v := range d.Events {
 		s := "-> " + v.FormatTimeAndName() + "\n"
 		sb.WriteString(s)

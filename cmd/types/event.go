@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -21,23 +22,33 @@ func NewEvent(name, description, location string, time time.Time, duration float
 }
 
 func (e *Event) FormatTimeAndName() string {
+
+	s := fmt.Sprintf("%s | %s", e.FormatDurationTime(), e.Name)
+
+	return s
+}
+
+func (e *Event) FormatDurationTime() string {
 	startTimeString := fmt.Sprintf("%02dh%02d", e.Time.Hour(), e.Time.Minute())
 
     duration := time.Duration(e.DurationHour * float64(time.Hour))
     endTime := e.Time.Add(duration)
 	endTimeString := fmt.Sprintf("%02dh%02d", endTime.Hour(), endTime.Minute())
 
-	s := fmt.Sprintf("%s-%s | %s", startTimeString, endTimeString, e.Name)
+    return fmt.Sprintf("%s-%s", startTimeString, endTimeString)
 
-	return s
-}
-
-func (e *Event) FormatTitle() string {
-	return "title"
 }
 
 func (e *Event) FormatBody() string {
-	return "test"
+	var sb strings.Builder
+
+    sb.WriteString("\n")
+    sb.WriteString(fmt.Sprintf("\n%s | %s\n", e.FormatDurationTime(), e.Location))
+    sb.WriteString("\nDescription :\n")
+    sb.WriteString( "------------\n")
+    sb.WriteString(e.Description)
+
+	return sb.String()
 }
 
 func (e Event) GetReccuringEvents() []Event {

@@ -7,18 +7,17 @@ import (
 	"github.com/jroimartin/gocui"
 )
 
-
 type HoverView struct {
 	*BaseView
 
-	Calendar *types.Calendar
-    CurrentView View
+	Calendar    *types.Calendar
+	CurrentView View
 }
 
 func NewHoverView(c *types.Calendar) *HoverView {
 	hv := &HoverView{
-        BaseView: NewBaseView("hover"),
-        Calendar: c,
+		BaseView: NewBaseView("hover"),
+		Calendar: c,
 	}
 
 	return hv
@@ -36,33 +35,30 @@ func (hv *HoverView) Update(g *gocui.Gui) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-        v.Wrap = true
+		v.Wrap = true
 	}
 
-    hv.updateTitle(v)
-    hv.updateBody(v)
+	hv.updateTitle(v)
+	hv.updateBody(v)
 
 	return nil
 }
 
 func (hv *HoverView) updateTitle(v *gocui.View) {
-    if view, ok := hv.CurrentView.(*DayView); ok {
-        v.Title = view.Day.FormatTimeAndHour()
-    } else if view, ok := hv.CurrentView.(*EventView); ok {
-        v.Title = view.Event.FormatTimeAndName()
-    }
+	if view, ok := hv.CurrentView.(*DayView); ok {
+		v.Title = view.Day.FormatTimeAndHour()
+	} else if view, ok := hv.CurrentView.(*EventView); ok {
+		v.Title = view.Event.Name
+	}
 }
 
 func (hv *HoverView) updateBody(v *gocui.View) {
-    v.Clear()
-    if view, ok := hv.CurrentView.(*DayView); ok {
-        v.FgColor = gocui.AttrBold | gocui.ColorYellow
-        fmt.Fprintln(v)
-        fmt.Fprintln(v, "\nEvents :")
-        fmt.Fprintln(v, "---------")
-        fmt.Fprintln(v, view.Day.FormatBody())
-    } else if view, ok := hv.CurrentView.(*EventView); ok {
-        fmt.Fprintln(v, view.Y)
-        fmt.Fprintln(v, view.Y+view.H)
-    }
+	v.Clear()
+	if view, ok := hv.CurrentView.(*DayView); ok {
+		v.FgColor = gocui.AttrBold | gocui.ColorYellow
+		fmt.Fprintln(v, view.Day.FormatBody())
+	} else if view, ok := hv.CurrentView.(*EventView); ok {
+		v.FgColor = gocui.AttrBold | gocui.ColorMagenta
+		fmt.Fprintln(v, view.Event.FormatBody())
+	}
 }
