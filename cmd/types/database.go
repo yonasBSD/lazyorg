@@ -109,3 +109,51 @@ func (database *Database) GetEventsByDate(date time.Time) ([]*Event, error) {
 
 	return events, err
 }
+
+func (database *Database) DeleteEvent(id int) error {
+    result, err := database.Db.Exec("DELETE FROM events WHERE id = ?", id)
+    if err != nil {
+        return err
+    }
+    
+    rowsAffected, err := result.RowsAffected()
+    if err != nil {
+        return err
+    }
+    
+    if rowsAffected == 0 {
+        return fmt.Errorf("event with id %d not found", id)
+    }
+    
+    return nil
+}
+
+func (database *Database) DeleteEventsByName(name string) error {
+    tx, err := database.Db.Begin()
+    if err != nil {
+        return err
+    }
+
+    result, err := tx.Exec("DELETE FROM events WHERE name = ?", name)
+    if err != nil {
+        tx.Rollback()
+        return err
+    }
+
+    rowsAffected, err := result.RowsAffected()
+    if err != nil {
+        tx.Rollback()
+        return err
+    }
+
+    if rowsAffected == 0 {
+        tx.Rollback()
+        return fmt.Errorf("no events found with the name: %s", name)
+    }
+
+    if err := tx.Commit(); err != nil {
+        return err
+    }
+
+    return nil
+}

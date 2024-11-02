@@ -140,6 +140,34 @@ func (av *AppView) UpdateToPrevTime(g *gocui.Gui) {
 	}
 }
 
+func (av *AppView) DeleteEvent(g *gocui.Gui) {
+	_, y := g.CurrentView().Cursor()
+
+	if view, ok := av.FindChildView(weekdayNames[av.Calendar.CurrentDay.Date.Weekday()]); ok {
+		if dayView, ok := view.(*DayView); ok {
+			if view, ok := dayView.IsOnEvent(y); ok {
+                if eventView, ok := view.(*EventView); ok {
+                    av.Database.DeleteEvent(eventView.Event.Id)
+                }
+			}
+		}
+	}
+}
+
+func (av *AppView) DeleteEvents(g *gocui.Gui) {
+	_, y := g.CurrentView().Cursor()
+
+	if view, ok := av.FindChildView(weekdayNames[av.Calendar.CurrentDay.Date.Weekday()]); ok {
+		if dayView, ok := view.(*DayView); ok {
+			if view, ok := dayView.IsOnEvent(y); ok {
+                if eventView, ok := view.(*EventView); ok {
+                    av.Database.DeleteEventsByName(eventView.Event.Name)
+                }
+			}
+		}
+	}
+}
+
 func (av *AppView) ShowPopup(g *gocui.Gui) error {
 	if view, ok := av.GetChild("popup"); ok {
 		view.SetProperties(
@@ -169,7 +197,7 @@ func (av *AppView) updateChildViewProperties() {
 	}
 
 	if mainView, ok := av.GetChild("main"); ok {
-        y := av.Y+TitleViewHeight+1
+		y := av.Y + TitleViewHeight + 1
 		mainView.SetProperties(
 			av.X+sideViewWidth+1,
 			y,
