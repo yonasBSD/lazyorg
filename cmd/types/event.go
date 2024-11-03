@@ -45,7 +45,7 @@ func (e *Event) FormatBody() string {
     sb.WriteString("\n")
     sb.WriteString(fmt.Sprintf("\n%s | %s\n", e.FormatDurationTime(), e.Location))
     sb.WriteString("\nDescription :\n")
-    sb.WriteString( "------------\n")
+    sb.WriteString( "--------------\n")
     sb.WriteString(e.Description)
 
 	return sb.String()
