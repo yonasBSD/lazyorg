@@ -19,7 +19,7 @@ func NewSideView(c *types.Calendar) *SideView {
 	}
 
 	sv.AddChild("hover", NewHoverView(c))
-	sv.AddChild("todo", NewTodoView(c))
+	sv.AddChild("notepad", NewNotepadView(c))
 
 	return sv
 }
@@ -51,7 +51,7 @@ func (sv *SideView) Update(g *gocui.Gui) error {
 
 func (sv *SideView) updateChildViewProperties() {
 	heightHover := int(float64(sv.H)*0.5)
-	heightTodo := sv.H - heightHover - 2
+	heightNotepad := sv.H - heightHover - 2
 
 	if hoverView, ok := sv.GetChild("hover"); ok {
 		hoverView.SetProperties(
@@ -62,12 +62,12 @@ func (sv *SideView) updateChildViewProperties() {
 		)
 	}
 
-	if todoView, ok := sv.GetChild("todo"); ok {
-		todoView.SetProperties(
+	if notepadView, ok := sv.GetChild("notepad"); ok {
+		notepadView.SetProperties(
 			sv.X,
 			sv.Y+heightHover+1,
 			sv.W,
-			heightTodo,
+			heightNotepad,
 		)
 	}
 }

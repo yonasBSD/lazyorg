@@ -140,6 +140,21 @@ func (av *AppView) UpdateToPrevTime(g *gocui.Gui) {
 	}
 }
 
+func (av *AppView) ChangeToNotepadView(g *gocui.Gui) error {
+    _, err := g.SetCurrentView("notepad")
+    if err != nil {
+        return err
+    }
+
+    return nil
+}
+
+func (av *AppView) ReturnToMainView(g *gocui.Gui) error {
+	viewName := weekdayNames[av.Calendar.CurrentDay.Date.Weekday()]
+    g.SetCurrentView(viewName)
+    return av.updateCurrentView(g)
+}
+
 func (av *AppView) DeleteEvent(g *gocui.Gui) {
 	_, y := g.CurrentView().Cursor()
 
@@ -224,6 +239,10 @@ func (av *AppView) updateCurrentView(g *gocui.Gui) error {
 			}
 		}
 	}
+
+    if g.CurrentView() != nil && g.CurrentView().Name() == "notepad" {
+        return nil
+    }
 
 	viewName := weekdayNames[av.Calendar.CurrentDay.Date.Weekday()]
 	var y int

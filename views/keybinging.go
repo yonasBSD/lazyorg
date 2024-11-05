@@ -26,15 +26,27 @@ func InitKeybindings(g *gocui.Gui, av *AppView) error {
 		{'L', func(g *gocui.Gui, v *gocui.View) error { av.UpdateToNextWeek(); return nil }},
 		{'d', func(g *gocui.Gui, v *gocui.View) error { av.DeleteEvent(g); return nil }},
 		{'D', func(g *gocui.Gui, v *gocui.View) error { av.DeleteEvents(g); return nil }},
-		{gocui.KeyCtrlD, func(g *gocui.Gui, v *gocui.View) error { av.HideSideView(g); return nil }},
+		{'N', func(g *gocui.Gui, v *gocui.View) error { return av.ChangeToNotepadView(g) }},
+		{gocui.KeyCtrlD, func(g *gocui.Gui, v *gocui.View) error { return av.HideSideView(g) }},
 		{gocui.KeyCtrlS, func(g *gocui.Gui, v *gocui.View) error { av.ShowSideView(); return nil }},
 	}
-
 	for _, viewName := range weekdayNames {
 		for _, kb := range mainKeybindings {
 			if err := g.SetKeybinding(viewName, kb.key, gocui.ModNone, kb.handler); err != nil {
 				return err
 			}
+		}
+	}
+
+	notepadKeybindings := []struct {
+		key     interface{}
+		handler func(*gocui.Gui, *gocui.View) error
+	}{
+		{gocui.KeyCtrlQ, func(g *gocui.Gui, v *gocui.View) error { return av.ReturnToMainView(g) }},
+	}
+	for _, kb := range notepadKeybindings {
+		if err := g.SetKeybinding("notepad", kb.key, gocui.ModNone, kb.handler); err != nil {
+			return err
 		}
 	}
 
