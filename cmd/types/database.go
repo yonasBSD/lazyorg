@@ -34,55 +34,64 @@ func (database *Database) InitDatabase(path string) error {
 	if err != nil {
 		return err
 	}
+	_, err = database.Db.Exec(
+		`CREATE TABLE IF NOT EXISTS notes (
+            id INTEGER NOT NULL PRIMARY KEY,
+            content TEXT NOT NULL,
+            updated_at DATETIME NOT NULL
+        )`)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
 
 func (database *Database) AddRecurringEvents(e *Event) ([]int, error) {
-    events := e.GetReccuringEvents()
-    ids := make([]int, 0, len(events))
+	events := e.GetReccuringEvents()
+	ids := make([]int, 0, len(events))
 
-    tx, err := database.Db.Begin()
-    if err != nil {
-        return nil, err
-    }
+	tx, err := database.Db.Begin()
+	if err != nil {
+		return nil, err
+	}
 
-    stmt, err := tx.Prepare(`INSERT INTO events (name, description, location, time, duration, frequency, occurence) VALUES (?, ?, ?, ?, ?, ?, ?)`)
-    if err != nil {
-        tx.Rollback()
-        return nil, err
-    }
-    defer stmt.Close()
+	stmt, err := tx.Prepare(`INSERT INTO events (name, description, location, time, duration, frequency, occurence) VALUES (?, ?, ?, ?, ?, ?, ?)`)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	defer stmt.Close()
 
-    for _, event := range events {
-        result, err := stmt.Exec(
-            event.Name,
-            event.Description,
-            event.Location,
-            event.Time,
-            event.DurationHour,
-            event.FrequencyDay,
-            event.Occurence,
-        )
-        if err != nil {
-            tx.Rollback()
-            return nil, err
-        }
+	for _, event := range events {
+		result, err := stmt.Exec(
+			event.Name,
+			event.Description,
+			event.Location,
+			event.Time,
+			event.DurationHour,
+			event.FrequencyDay,
+			event.Occurence,
+		)
+		if err != nil {
+			tx.Rollback()
+			return nil, err
+		}
 
-        id, err := result.LastInsertId()
-        if err != nil {
-            tx.Rollback()
-            return nil, err
-        }
+		id, err := result.LastInsertId()
+		if err != nil {
+			tx.Rollback()
+			return nil, err
+		}
 
-        ids = append(ids, int(id))
-    }
+		ids = append(ids, int(id))
+	}
 
-    if err := tx.Commit(); err != nil {
-        return nil, err
-    }
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
 
-    return ids, nil
+	return ids, nil
 }
 
 func (database *Database) GetEventsByDate(date time.Time) ([]*Event, error) {
@@ -111,49 +120,85 @@ func (database *Database) GetEventsByDate(date time.Time) ([]*Event, error) {
 }
 
 func (database *Database) DeleteEvent(id int) error {
-    result, err := database.Db.Exec("DELETE FROM events WHERE id = ?", id)
-    if err != nil {
-        return err
-    }
-    
-    rowsAffected, err := result.RowsAffected()
-    if err != nil {
-        return err
-    }
-    
-    if rowsAffected == 0 {
-        return fmt.Errorf("event with id %d not found", id)
-    }
-    
-    return nil
+	result, err := database.Db.Exec("DELETE FROM events WHERE id = ?", id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("event with id %d not found", id)
+	}
+
+	return nil
 }
 
 func (database *Database) DeleteEventsByName(name string) error {
+	tx, err := database.Db.Begin()
+	if err != nil {
+		return err
+	}
+
+	result, err := tx.Exec("DELETE FROM events WHERE name = ?", name)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if rowsAffected == 0 {
+		tx.Rollback()
+		return fmt.Errorf("no events found with the name: %s", name)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (database *Database) SaveNote(content string) error {
     tx, err := database.Db.Begin()
     if err != nil {
         return err
     }
 
-    result, err := tx.Exec("DELETE FROM events WHERE name = ?", name)
+    _, err = tx.Exec("DELETE FROM notes")
     if err != nil {
         tx.Rollback()
         return err
     }
 
-    rowsAffected, err := result.RowsAffected()
+    _, err = tx.Exec(
+        "INSERT INTO notes (content, updated_at) VALUES (?, datetime('now'))",
+        content,
+    )
     if err != nil {
         tx.Rollback()
         return err
     }
 
-    if rowsAffected == 0 {
-        tx.Rollback()
-        return fmt.Errorf("no events found with the name: %s", name)
-    }
+    return tx.Commit()
+}
 
-    if err := tx.Commit(); err != nil {
-        return err
+func (database *Database) GetLatestNote() (string, error) {
+    var content string
+    err := database.Db.QueryRow(
+        "SELECT content FROM notes ORDER BY updated_at DESC LIMIT 1",
+    ).Scan(&content)
+    
+    if err == sql.ErrNoRows {
+        return "", nil
     }
-
-    return nil
+    return content, err
 }
