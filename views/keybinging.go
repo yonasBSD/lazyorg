@@ -13,6 +13,17 @@ func InitKeybindings(g *gocui.Gui, av *AppView) error {
 		return err
 	}
 
+    if err := initMainKeybindings(g, av); err != nil {
+        return err
+    }
+    if err := initNotepadKeybindings(g, av); err != nil {
+        return err
+    }
+
+	return nil
+}
+
+func initMainKeybindings(g *gocui.Gui, av *AppView) error {
 	mainKeybindings := []struct {
 		key     interface{}
 		handler func(*gocui.Gui, *gocui.View) error
@@ -38,10 +49,15 @@ func InitKeybindings(g *gocui.Gui, av *AppView) error {
 		}
 	}
 
+    return nil
+}
+
+func initNotepadKeybindings(g *gocui.Gui, av *AppView) error {
 	notepadKeybindings := []struct {
 		key     interface{}
 		handler func(*gocui.Gui, *gocui.View) error
 	}{
+        {gocui.KeyCtrlR, func(g *gocui.Gui, v *gocui.View) error { return av.ClearNotepadContent(g) }},
 		{gocui.KeyCtrlQ, func(g *gocui.Gui, v *gocui.View) error { return av.ReturnToMainView(g) }},
 	}
 	for _, kb := range notepadKeybindings {
@@ -50,5 +66,5 @@ func InitKeybindings(g *gocui.Gui, av *AppView) error {
 		}
 	}
 
-	return nil
+    return nil
 }

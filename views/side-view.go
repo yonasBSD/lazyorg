@@ -12,14 +12,14 @@ type SideView struct {
 	// TODO
 }
 
-func NewSideView(c *types.Calendar) *SideView {
+func NewSideView(c *types.Calendar, db *types.Database) *SideView {
 	sv := &SideView{
 		BaseView: NewBaseView("side"),
 		Calendar: c,
 	}
 
 	sv.AddChild("hover", NewHoverView(c))
-	sv.AddChild("notepad", NewNotepadView(c))
+	sv.AddChild("notepad", NewNotepadView(c, db))
 
 	return sv
 }

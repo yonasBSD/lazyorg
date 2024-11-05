@@ -42,7 +42,7 @@ func NewAppView(g *gocui.Gui, db *types.Database) *AppView {
 	av.AddChild("title", NewTitleView(c))
 	av.AddChild("popup", NewEvenPopup(g, c, db))
 	av.AddChild("main", NewMainView(c))
-	av.AddChild("side", NewSideView(c))
+	av.AddChild("side", NewSideView(c, db))
 
 	return av
 }
@@ -106,7 +106,7 @@ func (av *AppView) ShowSideView() {
 	SideViewWidthRatio = 0.2
 	MainViewWidthRatio = 0.8
 
-	av.AddChild("side", NewSideView(av.Calendar))
+	av.AddChild("side", NewSideView(av.Calendar, av.Database))
 }
 
 func (av *AppView) UpdateToNextWeek() {
@@ -149,7 +149,32 @@ func (av *AppView) ChangeToNotepadView(g *gocui.Gui) error {
     return nil
 }
 
+func (av *AppView) ClearNotepadContent(g *gocui.Gui) error {
+    if view, ok := av.FindChildView("notepad"); ok {
+        if notepadView, ok := view.(*NotepadView); ok {
+            return notepadView.ClearContent(g)
+        }
+    }
+
+    return nil
+}
+
+
+func (av *AppView) SaveNotepadContent(g *gocui.Gui) error {
+    if view, ok := av.FindChildView("notepad"); ok {
+        if notepadView, ok := view.(*NotepadView); ok {
+            return notepadView.SaveContent(g)
+        }
+    }
+
+    return nil
+}
+
 func (av *AppView) ReturnToMainView(g *gocui.Gui) error {
+    if err := av.SaveNotepadContent(g); err != nil {
+        return err
+    }
+
 	viewName := weekdayNames[av.Calendar.CurrentDay.Date.Weekday()]
     g.SetCurrentView(viewName)
     return av.updateCurrentView(g)
