@@ -3,18 +3,19 @@ package views
 import (
 	"fmt"
 
-	"github.com/HubertBel/go-organizer/cmd/types"
+	"github.com/HubertBel/go-organizer/internal/calendar"
+	"github.com/HubertBel/go-organizer/internal/database"
 	"github.com/jroimartin/gocui"
 )
 
 type NotepadView struct {
 	*BaseView
 
-	Database *types.Database
+	Database *database.Database
 	content  string
 }
 
-func NewNotepadView(c *types.Calendar, db *types.Database) *NotepadView {
+func NewNotepadView(c *calendar.Calendar, db *database.Database) *NotepadView {
 	tv := &NotepadView{
 		BaseView: NewBaseView("notepad"),
 		Database: db,

@@ -1,7 +1,7 @@
 package views
 
 import (
-	"github.com/HubertBel/go-organizer/cmd/types"
+	"github.com/HubertBel/go-organizer/internal/calendar"
 	"github.com/jroimartin/gocui"
 )
 
@@ -12,10 +12,10 @@ const (
 type MainView struct {
 	*BaseView
 
-	Calendar *types.Calendar
+	Calendar *calendar.Calendar
 }
 
-func NewMainView(c *types.Calendar) *MainView {
+func NewMainView(c *calendar.Calendar) *MainView {
 	mv := &MainView{
 		BaseView: NewBaseView("main"),
 		Calendar: c,

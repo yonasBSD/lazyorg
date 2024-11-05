@@ -1,17 +1,17 @@
 package views
 
 import (
-	"github.com/HubertBel/go-organizer/cmd/types"
+	"github.com/HubertBel/go-organizer/internal/calendar"
 	"github.com/jroimartin/gocui"
 )
 
 type EventView struct {
     *BaseView
 
-    Event *types.Event
+    Event *calendar.Event
 }
 
-func NewEvenView(name string, e *types.Event) *EventView {
+func NewEvenView(name string, e *calendar.Event) *EventView {
 	return &EventView {
         BaseView: NewBaseView(name),
 

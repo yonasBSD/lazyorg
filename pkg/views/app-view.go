@@ -3,7 +3,9 @@ package views
 import (
 	"time"
 
-	"github.com/HubertBel/go-organizer/cmd/types"
+	"github.com/HubertBel/go-organizer/internal/calendar"
+	"github.com/HubertBel/go-organizer/internal/database"
+	"github.com/HubertBel/go-organizer/internal/utils"
 	"github.com/jroimartin/gocui"
 	"github.com/nsf/termbox-go"
 )
@@ -23,15 +25,15 @@ const (
 type AppView struct {
 	*BaseView
 
-	Database *types.Database
-	Calendar *types.Calendar
+	Database *database.Database
+	Calendar *calendar.Calendar
 }
 
-func NewAppView(g *gocui.Gui, db *types.Database) *AppView {
+func NewAppView(g *gocui.Gui, db *database.Database) *AppView {
 	now := time.Now()
 	t := time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0, 0, now.Location())
 
-	c := types.NewCalendar(types.NewDay(t))
+	c := calendar.NewCalendar(calendar.NewDay(t))
 
 	av := &AppView{
 		BaseView: NewBaseView("app"),
@@ -70,9 +72,9 @@ func (av *AppView) Update(g *gocui.Gui) error {
 		v.Frame = false
 	}
 
-	if err = av.Calendar.UpdateEventsFromDatabase(av.Database); err != nil {
-		return err
-	}
+    if err = av.updateEventsFromDatabase(); err != nil {
+        return err
+    }
 
 	av.updateChildViewProperties()
 
@@ -82,6 +84,23 @@ func (av *AppView) Update(g *gocui.Gui) error {
 
 	if err = av.updateCurrentView(g); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (av *AppView) updateEventsFromDatabase() error {
+	for _, v := range av.Calendar.CurrentWeek.Days {
+        clear(v.Events)
+
+		var err error
+        events, err := av.Database.GetEventsByDate(v.Date)
+		if err != nil {
+			return err
+		}
+
+		v.Events = events
+        v.SortEventsByTime()
 	}
 
 	return nil
@@ -175,7 +194,7 @@ func (av *AppView) ReturnToMainView(g *gocui.Gui) error {
         return err
     }
 
-	viewName := weekdayNames[av.Calendar.CurrentDay.Date.Weekday()]
+	viewName := WeekdayNames[av.Calendar.CurrentDay.Date.Weekday()]
     g.SetCurrentView(viewName)
     return av.updateCurrentView(g)
 }
@@ -183,7 +202,7 @@ func (av *AppView) ReturnToMainView(g *gocui.Gui) error {
 func (av *AppView) DeleteEvent(g *gocui.Gui) {
 	_, y := g.CurrentView().Cursor()
 
-	if view, ok := av.FindChildView(weekdayNames[av.Calendar.CurrentDay.Date.Weekday()]); ok {
+	if view, ok := av.FindChildView(WeekdayNames[av.Calendar.CurrentDay.Date.Weekday()]); ok {
 		if dayView, ok := view.(*DayView); ok {
 			if view, ok := dayView.IsOnEvent(y); ok {
                 if eventView, ok := view.(*EventView); ok {
@@ -197,7 +216,7 @@ func (av *AppView) DeleteEvent(g *gocui.Gui) {
 func (av *AppView) DeleteEvents(g *gocui.Gui) {
 	_, y := g.CurrentView().Cursor()
 
-	if view, ok := av.FindChildView(weekdayNames[av.Calendar.CurrentDay.Date.Weekday()]); ok {
+	if view, ok := av.FindChildView(WeekdayNames[av.Calendar.CurrentDay.Date.Weekday()]); ok {
 		if dayView, ok := view.(*DayView); ok {
 			if view, ok := dayView.IsOnEvent(y); ok {
                 if eventView, ok := view.(*EventView); ok {
@@ -269,14 +288,14 @@ func (av *AppView) updateCurrentView(g *gocui.Gui) error {
         return nil
     }
 
-	viewName := weekdayNames[av.Calendar.CurrentDay.Date.Weekday()]
+	viewName := WeekdayNames[av.Calendar.CurrentDay.Date.Weekday()]
 	var y int
 	var hoveredView View
 	g.Cursor = true
 
 	if view, ok := av.FindChildView("time"); ok {
 		if timeView, ok := view.(*TimeView); ok {
-			y = types.TimeToPosition(av.Calendar.CurrentDay.Date, timeView.Body)
+			y = utils.TimeToPosition(av.Calendar.CurrentDay.Date, timeView.Body)
 		}
 	}
 	g.Cursor = true

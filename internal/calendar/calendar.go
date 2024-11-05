@@ -1,4 +1,4 @@
-package types
+package calendar
 
 import (
 	"strconv"
@@ -47,22 +47,6 @@ func (c *Calendar) UpdateWeek() {
 	}
 }
 
-func (c *Calendar) UpdateEventsFromDatabase(db *Database) error {
-	for _, v := range c.CurrentWeek.Days {
-        clear(v.Events)
-
-		var err error
-		events, err := db.GetEventsByDate(v.Date)
-		if err != nil {
-			return err
-		}
-
-		v.Events = events
-        v.SortEventsByTime()
-	}
-
-	return nil
-}
 
 func (c *Calendar) RoundTime() {
 	min := c.CurrentDay.Date.Minute()

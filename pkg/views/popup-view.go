@@ -4,7 +4,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/HubertBel/go-organizer/cmd/types"
+	"github.com/HubertBel/go-organizer/internal/calendar"
+	"github.com/HubertBel/go-organizer/internal/database"
 	"github.com/j-04/gocui-component"
 	"github.com/jroimartin/gocui"
 )
@@ -19,13 +20,13 @@ const (
 type EventPopupView struct {
 	*BaseView
 	Form     *component.Form
-	Calendar *types.Calendar
-	Database *types.Database
+	Calendar *calendar.Calendar
+	Database *database.Database
 
 	IsVisible bool
 }
 
-func NewEvenPopup(g *gocui.Gui, c *types.Calendar, db *types.Database) *EventPopupView {
+func NewEvenPopup(g *gocui.Gui, c *calendar.Calendar, db *database.Database) *EventPopupView {
 
 	epv := &EventPopupView{
 		BaseView:  NewBaseView("popup"),
@@ -82,7 +83,7 @@ func (epv *EventPopupView) AddEvent(g *gocui.Gui, v *gocui.View) error {
 
 	description := epv.Form.GetFieldText("Description")
 
-	event := types.NewEvent(name, description, location, time, duration, frequency, occurence)
+	event := calendar.NewEvent(name, description, location, time, duration, frequency, occurence)
 
     if _, err := epv.Database.AddRecurringEvents(event); err != nil {
         return err

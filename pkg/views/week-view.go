@@ -1,11 +1,11 @@
 package views
 
 import (
-	"github.com/HubertBel/go-organizer/cmd/types"
+	"github.com/HubertBel/go-organizer/internal/calendar"
 	"github.com/jroimartin/gocui"
 )
 
-var weekdayNames = []string{
+var WeekdayNames = []string{
 	"Sunday",
 	"Monday",
 	"Tuesday",
@@ -22,25 +22,25 @@ const (
 type WeekView struct {
 	*BaseView
 
-	Calendar *types.Calendar
+	Calendar *calendar.Calendar
 
 	TimeView *TimeView
 }
 
-func NewWeekView(c *types.Calendar, tv *TimeView) *WeekView {
+func NewWeekView(c *calendar.Calendar, tv *TimeView) *WeekView {
 	wv := &WeekView{
 		BaseView: NewBaseView("week"),
 		Calendar: c,
 		TimeView: tv,
 	}
 
-	wv.AddChild(weekdayNames[0], NewDayView(weekdayNames[0], c.CurrentWeek.Days[0], tv))
-	wv.AddChild(weekdayNames[1], NewDayView(weekdayNames[1], c.CurrentWeek.Days[1], tv))
-	wv.AddChild(weekdayNames[2], NewDayView(weekdayNames[2], c.CurrentWeek.Days[2], tv))
-	wv.AddChild(weekdayNames[3], NewDayView(weekdayNames[3], c.CurrentWeek.Days[3], tv))
-	wv.AddChild(weekdayNames[4], NewDayView(weekdayNames[4], c.CurrentWeek.Days[4], tv))
-	wv.AddChild(weekdayNames[5], NewDayView(weekdayNames[5], c.CurrentWeek.Days[5], tv))
-	wv.AddChild(weekdayNames[6], NewDayView(weekdayNames[6], c.CurrentWeek.Days[6], tv))
+	wv.AddChild(WeekdayNames[0], NewDayView(WeekdayNames[0], c.CurrentWeek.Days[0], tv))
+	wv.AddChild(WeekdayNames[1], NewDayView(WeekdayNames[1], c.CurrentWeek.Days[1], tv))
+	wv.AddChild(WeekdayNames[2], NewDayView(WeekdayNames[2], c.CurrentWeek.Days[2], tv))
+	wv.AddChild(WeekdayNames[3], NewDayView(WeekdayNames[3], c.CurrentWeek.Days[3], tv))
+	wv.AddChild(WeekdayNames[4], NewDayView(WeekdayNames[4], c.CurrentWeek.Days[4], tv))
+	wv.AddChild(WeekdayNames[5], NewDayView(WeekdayNames[5], c.CurrentWeek.Days[5], tv))
+	wv.AddChild(WeekdayNames[6], NewDayView(WeekdayNames[6], c.CurrentWeek.Days[6], tv))
 
 	return wv
 }
@@ -73,7 +73,7 @@ func (wv *WeekView) updateChildViewProperties() {
 	x := wv.X
 	w := wv.W/7 - padding
 
-	for _, weekday := range weekdayNames {
+	for _, weekday := range WeekdayNames {
 		if dayView, ok := wv.GetChild(weekday); ok {
 
 			dayView.SetProperties(

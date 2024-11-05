@@ -1,10 +1,11 @@
-package types
+package database
 
 import (
 	"database/sql"
 	"fmt"
 	"time"
 
+	"github.com/HubertBel/go-organizer/internal/calendar"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -47,7 +48,7 @@ func (database *Database) InitDatabase(path string) error {
 	return nil
 }
 
-func (database *Database) AddRecurringEvents(e *Event) ([]int, error) {
+func (database *Database) AddRecurringEvents(e *calendar.Event) ([]int, error) {
 	events := e.GetReccuringEvents()
 	ids := make([]int, 0, len(events))
 
@@ -94,10 +95,10 @@ func (database *Database) AddRecurringEvents(e *Event) ([]int, error) {
 	return ids, nil
 }
 
-func (database *Database) GetEventsByDate(date time.Time) ([]*Event, error) {
+func (database *Database) GetEventsByDate(date time.Time) ([]*calendar.Event, error) {
 	formattedDate := fmt.Sprintf("%04d-%02d-%02d", date.Year(), date.Month(), date.Day())
 
-	var events []*Event
+	var events []*calendar.Event
 	rows, err := database.Db.Query(
 		`SELECT * FROM events WHERE date(time) = ?;`, formattedDate,
 	)
@@ -107,7 +108,7 @@ func (database *Database) GetEventsByDate(date time.Time) ([]*Event, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var event Event
+		var event calendar.Event
 		if err := rows.Scan(
 			&event.Id, &event.Name, &event.Description, &event.Location, &event.Time, &event.DurationHour, &event.FrequencyDay, &event.Occurence,
 		); err != nil {
@@ -116,7 +117,7 @@ func (database *Database) GetEventsByDate(date time.Time) ([]*Event, error) {
 		events = append(events, &event)
 	}
 
-	return events, err
+	return events, nil
 }
 
 func (database *Database) DeleteEvent(id int) error {

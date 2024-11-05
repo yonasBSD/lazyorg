@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/HubertBel/go-organizer/cmd/types"
+	"github.com/HubertBel/go-organizer/internal/calendar"
+	"github.com/HubertBel/go-organizer/internal/utils"
 	"github.com/jroimartin/gocui"
 	"github.com/nsf/termbox-go"
 )
@@ -12,11 +13,11 @@ import (
 type DayView struct {
 	*BaseView
 
-	Day      *types.Day
+	Day      *calendar.Day
 	TimeView *TimeView
 }
 
-func NewDayView(name string, d *types.Day, tv *TimeView) *DayView {
+func NewDayView(name string, d *calendar.Day, tv *TimeView) *DayView {
 	dv := &DayView{
 		BaseView: NewBaseView(name),
 		Day:      d,
@@ -73,9 +74,9 @@ func (dv *DayView) updateChildViewProperties(g *gocui.Gui) error {
 
 	for _, event := range dv.Day.Events {
 		x := dv.X + 1
-		y := dv.Y + types.TimeToPosition(event.Time, dv.TimeView.Body) + 1
+		y := dv.Y + utils.TimeToPosition(event.Time, dv.TimeView.Body) + 1
 		w := dv.W - 2
-		h := types.DurationToHeight(event.DurationHour)
+		h := utils.DurationToHeight(event.DurationHour)
 
 		if (y + h) >= (dv.Y + dv.H) {
             newHeight := (dv.Y + dv.H) - y

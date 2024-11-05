@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/HubertBel/go-organizer/cmd/types"
+	"github.com/HubertBel/go-organizer/internal/calendar"
 	"github.com/jroimartin/gocui"
 )
 
 type TitleView struct {
     *BaseView
 
-    Calendar *types.Calendar
+    Calendar *calendar.Calendar
 }
 
-func NewTitleView(c *types.Calendar) *TitleView {
+func NewTitleView(c *calendar.Calendar) *TitleView {
     tv := &TitleView{
         BaseView: NewBaseView("title"),
         Calendar: c,

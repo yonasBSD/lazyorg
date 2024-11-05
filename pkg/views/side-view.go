@@ -1,18 +1,18 @@
 package views
 
 import (
-	"github.com/HubertBel/go-organizer/cmd/types"
+	"github.com/HubertBel/go-organizer/internal/calendar"
+	"github.com/HubertBel/go-organizer/internal/database"
 	"github.com/jroimartin/gocui"
 )
 
 type SideView struct {
 	*BaseView
 
-	Calendar *types.Calendar
-	// TODO
+	Calendar *calendar.Calendar
 }
 
-func NewSideView(c *types.Calendar, db *types.Database) *SideView {
+func NewSideView(c *calendar.Calendar, db *database.Database) *SideView {
 	sv := &SideView{
 		BaseView: NewBaseView("side"),
 		Calendar: c,

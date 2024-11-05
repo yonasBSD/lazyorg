@@ -3,18 +3,18 @@ package views
 import (
 	"fmt"
 
-	"github.com/HubertBel/go-organizer/cmd/types"
+	"github.com/HubertBel/go-organizer/internal/calendar"
 	"github.com/jroimartin/gocui"
 )
 
 type HoverView struct {
 	*BaseView
 
-	Calendar    *types.Calendar
+	Calendar    *calendar.Calendar
 	CurrentView View
 }
 
-func NewHoverView(c *types.Calendar) *HoverView {
+func NewHoverView(c *calendar.Calendar) *HoverView {
 	hv := &HoverView{
 		BaseView: NewBaseView("hover"),
 		Calendar: c,

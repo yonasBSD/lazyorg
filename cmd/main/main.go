@@ -3,15 +3,16 @@ package main
 import (
 	"log"
 
-	"github.com/HubertBel/go-organizer/cmd/types"
-	"github.com/HubertBel/go-organizer/views"
+	"github.com/HubertBel/go-organizer/internal/database"
+	"github.com/HubertBel/go-organizer/internal/ui"
+	"github.com/HubertBel/go-organizer/pkg/views"
 	"github.com/jroimartin/gocui"
 )
 
 func main() {
-	path := "../../database.db"
+	path := "../../tmp/database.db"
 
-	database := &types.Database{}
+	database := &database.Database{}
 	err := database.InitDatabase(path)
 	if err != nil {
 		log.Fatal(err)
@@ -27,7 +28,7 @@ func main() {
 	av := views.NewAppView(g, database)
 	g.SetManager(av)
 
-	if err := views.InitKeybindings(g, av); err != nil {
+	if err := ui.InitKeybindings(g, av); err != nil {
 		log.Panicln(err)
 	}
 

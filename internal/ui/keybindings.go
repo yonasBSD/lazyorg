@@ -1,6 +1,7 @@
-package views
+package ui
 
 import (
+	"github.com/HubertBel/go-organizer/pkg/views"
 	"github.com/jroimartin/gocui"
 )
 
@@ -8,7 +9,7 @@ func quit(g *gocui.Gui, v *gocui.View) error {
 	return gocui.ErrQuit
 }
 
-func InitKeybindings(g *gocui.Gui, av *AppView) error {
+func InitKeybindings(g *gocui.Gui, av *views.AppView) error {
 	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
 		return err
 	}
@@ -23,7 +24,7 @@ func InitKeybindings(g *gocui.Gui, av *AppView) error {
 	return nil
 }
 
-func initMainKeybindings(g *gocui.Gui, av *AppView) error {
+func initMainKeybindings(g *gocui.Gui, av *views.AppView) error {
 	mainKeybindings := []struct {
 		key     interface{}
 		handler func(*gocui.Gui, *gocui.View) error
@@ -41,7 +42,7 @@ func initMainKeybindings(g *gocui.Gui, av *AppView) error {
 		{gocui.KeyCtrlD, func(g *gocui.Gui, v *gocui.View) error { return av.HideSideView(g) }},
 		{gocui.KeyCtrlS, func(g *gocui.Gui, v *gocui.View) error { av.ShowSideView(); return nil }},
 	}
-	for _, viewName := range weekdayNames {
+	for _, viewName := range views.WeekdayNames {
 		for _, kb := range mainKeybindings {
 			if err := g.SetKeybinding(viewName, kb.key, gocui.ModNone, kb.handler); err != nil {
 				return err
@@ -52,7 +53,7 @@ func initMainKeybindings(g *gocui.Gui, av *AppView) error {
     return nil
 }
 
-func initNotepadKeybindings(g *gocui.Gui, av *AppView) error {
+func initNotepadKeybindings(g *gocui.Gui, av *views.AppView) error {
 	notepadKeybindings := []struct {
 		key     interface{}
 		handler func(*gocui.Gui, *gocui.View) error
