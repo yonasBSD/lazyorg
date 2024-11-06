@@ -10,13 +10,17 @@ func DurationToHeight(d float64) int {
 	return int(d * 2)
 }
 
-func FormatHour(t time.Time) string {
+func FormatHourFromTime(t time.Time) string {
 	return fmt.Sprintf("%02d:%02d", t.Hour(), t.Minute())
+}
+
+func FormatHour(hour, minute int) string {
+	return fmt.Sprintf("%02d:%02d", hour, minute)
 }
 
 func TimeToPosition(t time.Time, s string) int {
 
-    time := FormatHour(t)
+    time := FormatHourFromTime(t)
 	lines := strings.Split(s, "\n")
 
 	for i, v := range lines {
@@ -27,4 +31,3 @@ func TimeToPosition(t time.Time, s string) int {
 
 	return -1
 }
-

@@ -3,6 +3,7 @@ package views
 import (
 	"fmt"
 
+	"github.com/HubertBel/go-organizer/internal/utils"
 	"github.com/jroimartin/gocui"
 )
 
@@ -47,11 +48,12 @@ func (tv *TimeView) updateBody(v *gocui.View) {
 	tv.Body = ""
 
 	for range tv.H {
+        s := utils.FormatHour(initialTime, halfTime)
 		if halfTime == 0 {
-			tv.Body += fmt.Sprintf("%02d:%02d - \n", initialTime, halfTime)
+			tv.Body += fmt.Sprintf("%s - \n", s)
 			halfTime = 30
 		} else {
-			tv.Body += fmt.Sprintf("%02d:%02d\n", initialTime, halfTime)
+			tv.Body += fmt.Sprintf("%s \n", s)
 			initialTime++
 			halfTime = 0
 		}

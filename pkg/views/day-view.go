@@ -41,7 +41,7 @@ func (dv *DayView) Update(g *gocui.Gui) error {
 		}
 	}
 
-    dv.updateBgColor(v)
+	dv.updateBgColor(v)
 
 	v.Title = dv.Day.FormatTitle()
 
@@ -79,11 +79,11 @@ func (dv *DayView) updateChildViewProperties(g *gocui.Gui) error {
 		h := utils.DurationToHeight(event.DurationHour)
 
 		if (y + h) >= (dv.Y + dv.H) {
-            newHeight := (dv.Y + dv.H) - y
-            if newHeight <= 0{
-                continue
-            }
-            h = newHeight
+			newHeight := (dv.Y + dv.H) - y
+			if newHeight <= 0 {
+				continue
+			}
+			h = newHeight
 		}
 		if y <= dv.Y {
 			continue
@@ -110,14 +110,14 @@ func (dv *DayView) updateChildViewProperties(g *gocui.Gui) error {
 	return nil
 }
 
-func (dv* DayView) IsOnEvent(y int) (View, bool) {
-    y += dv.Y + 1
+func (dv *DayView) IsOnEvent(y int) (View, bool) {
+	y += dv.Y + 1
 	for pair := dv.children.Oldest(); pair != nil; pair = pair.Next() {
 		if eventView, ok := pair.Value.(*EventView); ok {
-            if y >= eventView.Y && y < (eventView.Y + eventView.H) {
-                return eventView, true
-            }
+			if y >= eventView.Y && y < (eventView.Y+eventView.H) {
+				return eventView, true
+			}
 		}
 	}
-    return nil, false
+	return nil, false
 }

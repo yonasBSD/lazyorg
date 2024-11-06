@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/HubertBel/go-organizer/internal/utils"
 )
 
 type Event struct {
@@ -22,21 +24,17 @@ func NewEvent(name, description, location string, time time.Time, duration float
 }
 
 func (e *Event) FormatTimeAndName() string {
-
-	s := fmt.Sprintf("%s | %s", e.FormatDurationTime(), e.Name)
-
-	return s
+	return fmt.Sprintf("%s | %s", e.FormatDurationTime(), e.Name)
 }
 
 func (e *Event) FormatDurationTime() string {
-	startTimeString := fmt.Sprintf("%02dh%02d", e.Time.Hour(), e.Time.Minute())
+	startTimeString := utils.FormatHourFromTime(e.Time)
 
     duration := time.Duration(e.DurationHour * float64(time.Hour))
     endTime := e.Time.Add(duration)
-	endTimeString := fmt.Sprintf("%02dh%02d", endTime.Hour(), endTime.Minute())
+	endTimeString := utils.FormatHourFromTime(endTime)
 
     return fmt.Sprintf("%s-%s", startTimeString, endTimeString)
-
 }
 
 func (e *Event) FormatBody() string {

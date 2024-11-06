@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/HubertBel/go-organizer/internal/calendar"
+	"github.com/HubertBel/go-organizer/internal/utils"
 	"github.com/jroimartin/gocui"
 )
 
@@ -47,7 +48,7 @@ func (tv *TitleView) Update(g *gocui.Gui) error {
 func (tv *TitleView) updateBody(v *gocui.View) {
     today := time.Now()
     selectedWeek := tv.Calendar.FormatWeekBody()
-    todayString := fmt.Sprintf("%s %d - %02dh%02d", today.Month().String(), today.Day(), today.Hour(), today.Minute())
+    todayString := fmt.Sprintf("%s %d - %s", today.Month().String(), today.Day(), utils.FormatHourFromTime(today))
 
     title := fmt.Sprintf("%s | %s", selectedWeek, todayString)
 

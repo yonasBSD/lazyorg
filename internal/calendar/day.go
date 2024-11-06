@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/HubertBel/go-organizer/internal/utils"
 )
 
 type Day struct {
@@ -22,8 +24,7 @@ func (d *Day) FormatTitle() string {
 }
 
 func (d *Day) FormatTimeAndHour() string {
-	s := fmt.Sprintf("%s %d | %02dh%02d", d.Date.Month().String(), d.Date.Day(), d.Date.Hour(), d.Date.Minute())
-	return s
+	return fmt.Sprintf("%s %d | %s", d.Date.Month().String(), d.Date.Day(), utils.FormatHourFromTime(d.Date))
 }
 
 func (d *Day) FormatBody() string {
