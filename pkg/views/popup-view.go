@@ -10,13 +10,6 @@ import (
 	"github.com/jroimartin/gocui"
 )
 
-const (
-	LabelWidth = 12
-	FieldWidth = 20
-
-	TimeFormat = "2006-01-02 15:04"
-)
-
 type EventPopupView struct {
 	*BaseView
 	Form     *component.Form

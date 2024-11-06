@@ -12,6 +12,7 @@ type NotepadView struct {
 	*BaseView
 
 	Database *database.Database
+    IsActive bool
 	content  string
 }
 
@@ -19,6 +20,7 @@ func NewNotepadView(c *calendar.Calendar, db *database.Database) *NotepadView {
 	tv := &NotepadView{
 		BaseView: NewBaseView("notepad"),
 		Database: db,
+        IsActive: false,
 	}
 
 	content, err := db.GetLatestNote()

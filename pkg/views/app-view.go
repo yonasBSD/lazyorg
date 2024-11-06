@@ -15,13 +15,6 @@ var (
 	SideViewWidthRatio = 0.2
 )
 
-const (
-	TitleViewHeight = 3
-
-	PopupWidth  = LabelWidth + FieldWidth
-	PopupHeight = 16
-)
-
 type AppView struct {
 	*BaseView
 
@@ -106,26 +99,24 @@ func (av *AppView) updateEventsFromDatabase() error {
 	return nil
 }
 
-func (av *AppView) HideSideView(g *gocui.Gui) error {
-	SideViewWidthRatio = 0.0
-	MainViewWidthRatio = 1.0
-
+func (av *AppView) ShowOrHideSideView(g *gocui.Gui) error {
 	if sideView, ok := av.GetChild("side"); ok {
 		if err := sideView.ClearChildren(g); err != nil {
 			return err
 		}
+		SideViewWidthRatio = 0.0
+		MainViewWidthRatio = 1.0
+
+		av.children.Delete("side")
+		return g.DeleteView("side")
 	}
-	av.children.Delete("side")
-	g.DeleteView("side")
 
-	return nil
-}
-
-func (av *AppView) ShowSideView() {
 	SideViewWidthRatio = 0.2
 	MainViewWidthRatio = 0.8
 
 	av.AddChild("side", NewSideView(av.Calendar, av.Database))
+
+	return nil
 }
 
 func (av *AppView) UpdateToNextWeek() {
@@ -229,16 +220,39 @@ func (av *AppView) DeleteEvents(g *gocui.Gui) {
 func (av *AppView) ShowPopup(g *gocui.Gui) error {
 	if view, ok := av.GetChild("popup"); ok {
 		if popupView, ok := view.(*EventPopupView); ok {
-            view.SetProperties(
-                av.X+(av.W-PopupWidth)/2,
-                av.Y+(av.H-PopupHeight)/2,
-                PopupWidth,
-                PopupHeight,
-                )
+			view.SetProperties(
+				av.X+(av.W-PopupWidth)/2,
+				av.Y+(av.H-PopupHeight)/2,
+				PopupWidth,
+				PopupHeight,
+			)
 			return popupView.Show(g)
 		}
 	}
 	return nil
+}
+
+func (av *AppView) ShowKeybinds(g *gocui.Gui) error {
+	if view, ok := av.GetChild("keybinds"); ok {
+		if keybindsView, ok := view.(*KeybindsView); ok {
+            if keybindsView.IsVisible {
+                keybindsView.IsVisible = false
+                return g.DeleteView(keybindsView.Name)
+            }
+
+            keybindsView.IsVisible = true
+            keybindsView.SetProperties(
+                av.X + (av.W-KeybindsWidth)/2,
+                av.Y + (av.H-KeybindsHeight)/2,
+                KeybindsWidth,
+                KeybindsHeight,
+                )
+
+            return keybindsView.Update(g)
+		}
+	}
+
+    return nil
 }
 
 func (av *AppView) updateChildViewProperties() {

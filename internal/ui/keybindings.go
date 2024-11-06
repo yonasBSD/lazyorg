@@ -14,15 +14,7 @@ func InitKeybindings(g *gocui.Gui, av *views.AppView) error {
 		return err
 	}
     if err := g.SetKeybinding("", '?', gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
-        if view, ok := av.GetChild("keybinds"); ok {
-            if keybindsView, ok := view.(*views.KeybindsView); ok {
-                if keybindsView.IsVisible {
-                    return keybindsView.Hide(g)
-                }
-                return keybindsView.Show(g)
-            }
-        }
-        return nil
+        return av.ShowKeybinds(g)
     }); err != nil {
         return err
     }
@@ -51,9 +43,8 @@ func initMainKeybindings(g *gocui.Gui, av *views.AppView) error {
 		{'L', func(g *gocui.Gui, v *gocui.View) error { av.UpdateToNextWeek(); return nil }},
 		{'d', func(g *gocui.Gui, v *gocui.View) error { av.DeleteEvent(g); return nil }},
 		{'D', func(g *gocui.Gui, v *gocui.View) error { av.DeleteEvents(g); return nil }},
-		{'N', func(g *gocui.Gui, v *gocui.View) error { return av.ChangeToNotepadView(g) }},
-		{gocui.KeyCtrlD, func(g *gocui.Gui, v *gocui.View) error { return av.HideSideView(g) }},
-		{gocui.KeyCtrlS, func(g *gocui.Gui, v *gocui.View) error { av.ShowSideView(); return nil }},
+		{gocui.KeyCtrlN, func(g *gocui.Gui, v *gocui.View) error { return av.ChangeToNotepadView(g) }},
+		{gocui.KeyCtrlS, func(g *gocui.Gui, v *gocui.View) error { return av.ShowOrHideSideView(g) }},
 	}
 	for _, viewName := range views.WeekdayNames {
 		for _, kb := range mainKeybindings {
@@ -72,7 +63,7 @@ func initNotepadKeybindings(g *gocui.Gui, av *views.AppView) error {
 		handler func(*gocui.Gui, *gocui.View) error
 	}{
 		{gocui.KeyCtrlR, func(g *gocui.Gui, v *gocui.View) error { return av.ClearNotepadContent(g) }},
-		{gocui.KeyCtrlQ, func(g *gocui.Gui, v *gocui.View) error { return av.ReturnToMainView(g) }},
+		{gocui.KeyCtrlN, func(g *gocui.Gui, v *gocui.View) error { return av.ReturnToMainView(g) }},
 	}
 	for _, kb := range notepadKeybindings {
 		if err := g.SetKeybinding("notepad", kb.key, gocui.ModNone, kb.handler); err != nil {

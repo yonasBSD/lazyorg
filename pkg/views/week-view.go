@@ -15,10 +15,6 @@ var WeekdayNames = []string{
 	"Saturday",
 }
 
-const (
-	padding = 1
-)
-
 type WeekView struct {
 	*BaseView
 
@@ -71,7 +67,7 @@ func (wv *WeekView) Update(g *gocui.Gui) error {
 
 func (wv *WeekView) updateChildViewProperties() {
 	x := wv.X
-	w := wv.W/7 - padding
+	w := wv.W/7 - Padding
 
 	for _, weekday := range WeekdayNames {
 		if dayView, ok := wv.GetChild(weekday); ok {
@@ -84,6 +80,6 @@ func (wv *WeekView) updateChildViewProperties() {
 			)
 		}
 
-		x += w + padding
+		x += w + Padding
 	}
 }

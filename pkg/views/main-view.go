@@ -5,10 +5,6 @@ import (
 	"github.com/jroimartin/gocui"
 )
 
-const (
-	TimeViewWidth = 9
-)
-
 type MainView struct {
 	*BaseView
 
