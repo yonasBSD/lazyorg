@@ -21,7 +21,6 @@ func NewMainView(c *calendar.Calendar) *MainView {
 		Calendar: c,
 	}
 
-	// TODO timeview accessible by everyone
 	tv := NewTimeView()
 	mv.AddChild("time", tv)
 	mv.AddChild("week", NewWeekView(c, tv))

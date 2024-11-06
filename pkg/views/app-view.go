@@ -45,6 +45,7 @@ func NewAppView(g *gocui.Gui, db *database.Database) *AppView {
 	av.AddChild("popup", NewEvenPopup(g, c, db))
 	av.AddChild("main", NewMainView(c))
 	av.AddChild("side", NewSideView(c, db))
+	av.AddChild("keybinds", NewKeybindsView())
 
 	return av
 }
@@ -54,7 +55,6 @@ func (av *AppView) Layout(g *gocui.Gui) error {
 }
 
 func (av *AppView) Update(g *gocui.Gui) error {
-
 	maxX, maxY := g.Size()
 	av.SetProperties(0, 1, maxX-1, maxY-1)
 
@@ -72,9 +72,9 @@ func (av *AppView) Update(g *gocui.Gui) error {
 		v.Frame = false
 	}
 
-    if err = av.updateEventsFromDatabase(); err != nil {
-        return err
-    }
+	if err = av.updateEventsFromDatabase(); err != nil {
+		return err
+	}
 
 	av.updateChildViewProperties()
 
@@ -91,16 +91,16 @@ func (av *AppView) Update(g *gocui.Gui) error {
 
 func (av *AppView) updateEventsFromDatabase() error {
 	for _, v := range av.Calendar.CurrentWeek.Days {
-        clear(v.Events)
+		clear(v.Events)
 
 		var err error
-        events, err := av.Database.GetEventsByDate(v.Date)
+		events, err := av.Database.GetEventsByDate(v.Date)
 		if err != nil {
 			return err
 		}
 
 		v.Events = events
-        v.SortEventsByTime()
+		v.SortEventsByTime()
 	}
 
 	return nil
@@ -160,43 +160,42 @@ func (av *AppView) UpdateToPrevTime(g *gocui.Gui) {
 }
 
 func (av *AppView) ChangeToNotepadView(g *gocui.Gui) error {
-    _, err := g.SetCurrentView("notepad")
-    if err != nil {
-        return err
-    }
+	_, err := g.SetCurrentView("notepad")
+	if err != nil {
+		return err
+	}
 
-    return nil
+	return nil
 }
 
 func (av *AppView) ClearNotepadContent(g *gocui.Gui) error {
-    if view, ok := av.FindChildView("notepad"); ok {
-        if notepadView, ok := view.(*NotepadView); ok {
-            return notepadView.ClearContent(g)
-        }
-    }
+	if view, ok := av.FindChildView("notepad"); ok {
+		if notepadView, ok := view.(*NotepadView); ok {
+			return notepadView.ClearContent(g)
+		}
+	}
 
-    return nil
+	return nil
 }
 
-
 func (av *AppView) SaveNotepadContent(g *gocui.Gui) error {
-    if view, ok := av.FindChildView("notepad"); ok {
-        if notepadView, ok := view.(*NotepadView); ok {
-            return notepadView.SaveContent(g)
-        }
-    }
+	if view, ok := av.FindChildView("notepad"); ok {
+		if notepadView, ok := view.(*NotepadView); ok {
+			return notepadView.SaveContent(g)
+		}
+	}
 
-    return nil
+	return nil
 }
 
 func (av *AppView) ReturnToMainView(g *gocui.Gui) error {
-    if err := av.SaveNotepadContent(g); err != nil {
-        return err
-    }
+	if err := av.SaveNotepadContent(g); err != nil {
+		return err
+	}
 
 	viewName := WeekdayNames[av.Calendar.CurrentDay.Date.Weekday()]
-    g.SetCurrentView(viewName)
-    return av.updateCurrentView(g)
+	g.SetCurrentView(viewName)
+	return av.updateCurrentView(g)
 }
 
 func (av *AppView) DeleteEvent(g *gocui.Gui) {
@@ -205,9 +204,9 @@ func (av *AppView) DeleteEvent(g *gocui.Gui) {
 	if view, ok := av.FindChildView(WeekdayNames[av.Calendar.CurrentDay.Date.Weekday()]); ok {
 		if dayView, ok := view.(*DayView); ok {
 			if view, ok := dayView.IsOnEvent(y); ok {
-                if eventView, ok := view.(*EventView); ok {
-                    av.Database.DeleteEvent(eventView.Event.Id)
-                }
+				if eventView, ok := view.(*EventView); ok {
+					av.Database.DeleteEvent(eventView.Event.Id)
+				}
 			}
 		}
 	}
@@ -219,9 +218,9 @@ func (av *AppView) DeleteEvents(g *gocui.Gui) {
 	if view, ok := av.FindChildView(WeekdayNames[av.Calendar.CurrentDay.Date.Weekday()]); ok {
 		if dayView, ok := view.(*DayView); ok {
 			if view, ok := dayView.IsOnEvent(y); ok {
-                if eventView, ok := view.(*EventView); ok {
-                    av.Database.DeleteEventsByName(eventView.Event.Name)
-                }
+				if eventView, ok := view.(*EventView); ok {
+					av.Database.DeleteEventsByName(eventView.Event.Name)
+				}
 			}
 		}
 	}
@@ -229,13 +228,13 @@ func (av *AppView) DeleteEvents(g *gocui.Gui) {
 
 func (av *AppView) ShowPopup(g *gocui.Gui) error {
 	if view, ok := av.GetChild("popup"); ok {
-		view.SetProperties(
-			av.X+(av.W/2-PopupWidth/2),
-			av.Y+(av.H/2-PopupHeight/2),
-			PopupWidth,
-			PopupHeight,
-		)
 		if popupView, ok := view.(*EventPopupView); ok {
+            view.SetProperties(
+                av.X+(av.W-PopupWidth)/2,
+                av.Y+(av.H-PopupHeight)/2,
+                PopupWidth,
+                PopupHeight,
+                )
 			return popupView.Show(g)
 		}
 	}
@@ -284,9 +283,9 @@ func (av *AppView) updateCurrentView(g *gocui.Gui) error {
 		}
 	}
 
-    if g.CurrentView() != nil && g.CurrentView().Name() == "notepad" {
-        return nil
-    }
+	if g.CurrentView() != nil && g.CurrentView().Name() == "notepad" {
+		return nil
+	}
 
 	viewName := WeekdayNames[av.Calendar.CurrentDay.Date.Weekday()]
 	var y int
