@@ -3,9 +3,9 @@ package views
 import (
 	"time"
 
-	"github.com/HubertBel/go-organizer/internal/calendar"
-	"github.com/HubertBel/go-organizer/internal/database"
-	"github.com/HubertBel/go-organizer/internal/utils"
+	"github.com/HubertBel/lazyorg/internal/calendar"
+	"github.com/HubertBel/lazyorg/internal/database"
+	"github.com/HubertBel/lazyorg/internal/utils"
 	"github.com/jroimartin/gocui"
 	"github.com/nsf/termbox-go"
 )

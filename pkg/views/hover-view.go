@@ -3,7 +3,7 @@ package views
 import (
 	"fmt"
 
-	"github.com/HubertBel/go-organizer/internal/calendar"
+	"github.com/HubertBel/lazyorg/internal/calendar"
 	"github.com/jroimartin/gocui"
 )
 

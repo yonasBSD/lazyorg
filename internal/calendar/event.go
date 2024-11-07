@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/HubertBel/go-organizer/internal/utils"
+	"github.com/HubertBel/lazyorg/internal/utils"
 )
 
 type Event struct {

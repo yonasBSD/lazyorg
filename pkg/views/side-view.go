@@ -1,8 +1,8 @@
 package views
 
 import (
-	"github.com/HubertBel/go-organizer/internal/calendar"
-	"github.com/HubertBel/go-organizer/internal/database"
+	"github.com/HubertBel/lazyorg/internal/calendar"
+	"github.com/HubertBel/lazyorg/internal/database"
 	"github.com/jroimartin/gocui"
 )
 

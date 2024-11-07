@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/HubertBel/go-organizer/internal/database"
-	"github.com/HubertBel/go-organizer/internal/ui"
-	"github.com/HubertBel/go-organizer/pkg/views"
+	"github.com/HubertBel/lazyorg/internal/database"
+	"github.com/HubertBel/lazyorg/internal/ui"
+	"github.com/HubertBel/lazyorg/pkg/views"
 	"github.com/jroimartin/gocui"
 )
 

@@ -1,4 +1,4 @@
-module github.com/HubertBel/go-organizer
+module github.com/HubertBel/lazyorg
 
 go 1.22.0
 

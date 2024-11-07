@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"github.com/HubertBel/go-organizer/pkg/views"
+	"github.com/HubertBel/lazyorg/pkg/views"
 	"github.com/jroimartin/gocui"
 )
 

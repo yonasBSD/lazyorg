@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/HubertBel/go-organizer/internal/calendar"
-	"github.com/HubertBel/go-organizer/internal/utils"
+	"github.com/HubertBel/lazyorg/internal/calendar"
+	"github.com/HubertBel/lazyorg/internal/utils"
 	"github.com/jroimartin/gocui"
 	"github.com/nsf/termbox-go"
 )

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/HubertBel/go-organizer/internal/calendar"
+	"github.com/HubertBel/lazyorg/internal/calendar"
 	_ "github.com/mattn/go-sqlite3"
 )
 
