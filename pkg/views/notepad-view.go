@@ -43,7 +43,7 @@ func (npv *NotepadView) Update(g *gocui.Gui) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		v.Title = "Notepad"
+		v.Title = " Notepad "
 		v.Editable = true
 		v.FgColor = gocui.AttrBold
 		v.Wrap = true

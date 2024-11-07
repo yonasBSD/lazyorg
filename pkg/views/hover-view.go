@@ -46,9 +46,9 @@ func (hv *HoverView) Update(g *gocui.Gui) error {
 
 func (hv *HoverView) updateTitle(v *gocui.View) {
 	if view, ok := hv.CurrentView.(*DayView); ok {
-		v.Title = view.Day.FormatTimeAndHour()
+		v.Title = " " + view.Day.FormatTimeAndHour() + " "
 	} else if view, ok := hv.CurrentView.(*EventView); ok {
-		v.Title = view.Event.Name
+		v.Title = " " + view.Event.Name + " "
 	}
 }
 
