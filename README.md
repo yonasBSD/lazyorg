@@ -1,6 +1,6 @@
 # Lazyorg
 
-A simple terminal-based calendar and note-taking application for people who prefer staying in their terminal.
+A simple terminal-based calendar and note-taking application.
 
 ## Features
 
