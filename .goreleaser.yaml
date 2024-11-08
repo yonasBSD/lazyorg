@@ -18,8 +18,6 @@ before:
 builds:
   - main: ./cmd/lazyorg/
 
-    env:
-      - CGO_ENABLED=0
     goos:
       - linux
       - windows
