@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/HubertBel/lazyorg/internal/database"
 	"github.com/HubertBel/lazyorg/internal/ui"
@@ -10,10 +12,20 @@ import (
 )
 
 func main() {
-	path := "../../tmp/database.db"
+    homeDir, err := os.UserHomeDir()
+    if err != nil {
+        log.Fatal(err)
+    }
+    dbDirPath := filepath.Join(homeDir, ".local", "share", "lazyorg")
+    dbFilePath := filepath.Join(dbDirPath, "data.db")
+
+    err = os.MkdirAll(dbDirPath, 0755)
+    if err != nil {
+        log.Fatal(err)
+    }
 
 	database := &database.Database{}
-	err := database.InitDatabase(path)
+	err = database.InitDatabase(dbFilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
