@@ -72,6 +72,7 @@ Please feel free to submit a Pull Request!
 
 ## Roadmap
 
+- [ ] Modification of the range of time
 - [ ] Undo/Redo
 - [ ] Event modification
 - [ ] Toggle buisness week vs calendar week
