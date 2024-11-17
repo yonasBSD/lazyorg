@@ -25,6 +25,19 @@ git clone https://github.com/HubertBel/lazyorg.git
 cd lazyorg
 go build
 ```
+### Docker Image
+
+```bash
+docker pull defnotgustavom/lazyorg
+docker run -it --log-driver none --cap-drop=ALL --net none --security-opt=no-new-privileges --name lazyorg -v /usr/share/zoneinfo/Your/Location:/usr/share/zoneinfo/Your/Location:ro -e TZ=Your/Location defnotgustavom/lazyorg
+```
+Switch **Your/location** to your current location. Use ```timedatectl list-timezones``` to fetch a list of possible locations.
+
+To rerun the container:
+```bash
+docker start -ai lazyorg
+```
+
 
 ## Usage
 
@@ -69,6 +82,7 @@ Please feel free to submit a Pull Request!
 ## Acknowledgments
 - Inspired by [lazygit](https://github.com/jesseduffield/lazygit)
 - Built with [gocui](https://github.com/jroimartin/gocui) TUI framework
+- Thanks to _defnotgustavom_ for the [docker image](https://hub.docker.com/r/defnotgustavom/lazyorg)
 
 ## Roadmap
 
