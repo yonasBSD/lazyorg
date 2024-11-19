@@ -21,11 +21,9 @@ archives:
   - format: tar.gz
     name_template: >-
       {{ .ProjectName }}_
-      {{- title .Os }}_
-      {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
-      {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
+      {{- .Version }}_
+      {{- .Os }}_
+      {{- .Arch }}
     files:
       - LICENSE*
       - README*
