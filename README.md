@@ -15,16 +15,11 @@ A simple terminal-based calendar and note-taking application.
 ### Prerequisites
 - Go 1.23 or higher
 
-### Binary Installation
-Download pre-compiled binary from the latest release.
-MacOS and Windows have not been tested yet.
-
-### From Source
+### Arch
 ```bash
-git clone https://github.com/HubertBel/lazyorg.git
-cd lazyorg
-go build
+yay -S lazyorg-bin
 ```
+
 ### Docker Image
 
 ```bash
@@ -37,7 +32,16 @@ To rerun the container:
 ```bash
 docker start -ai lazyorg
 ```
+### Binary Installation
+Download pre-compiled binary from the latest release.
+MacOS and Windows have not been tested yet.
 
+### From Source
+```bash
+git clone https://github.com/HubertBel/lazyorg.git
+cd lazyorg
+go build
+```
 
 ## Usage
 
