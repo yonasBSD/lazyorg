@@ -1,7 +1,7 @@
 # Lazyorg
 A simple terminal-based calendar and note-taking application.
 <p align="center">
-  <img src="./demo.gif" alt="Lazyorg Demo"/>
+  <img src="./demo.gif" alt="Lazyorg Demo" width="100%"/>
 </p>
 
 ## Features
