@@ -10,18 +10,18 @@ import (
 )
 
 type Database struct {
-	Db *sql.DB
+	db *sql.DB
 }
 
 func (database *Database) InitDatabase(path string) error {
 	var err error
 
-	database.Db, err = sql.Open("sqlite3", path)
+	database.db, err = sql.Open("sqlite3", path)
 	if err != nil {
 		return err
 	}
 
-	_, err = database.Db.Exec(
+	_, err = database.db.Exec(
 		`CREATE TABLE IF NOT EXISTS events (
             id INTEGER NOT NULL PRIMARY KEY,
             name TEXT NOT NULL,
@@ -35,7 +35,7 @@ func (database *Database) InitDatabase(path string) error {
 	if err != nil {
 		return err
 	}
-	_, err = database.Db.Exec(
+	_, err = database.db.Exec(
 		`CREATE TABLE IF NOT EXISTS notes (
             id INTEGER NOT NULL PRIMARY KEY,
             content TEXT NOT NULL,
@@ -52,7 +52,7 @@ func (database *Database) AddRecurringEvents(e *calendar.Event) ([]int, error) {
 	events := e.GetReccuringEvents()
 	ids := make([]int, 0, len(events))
 
-	tx, err := database.Db.Begin()
+	tx, err := database.db.Begin()
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +99,7 @@ func (database *Database) GetEventsByDate(date time.Time) ([]*calendar.Event, er
 	formattedDate := fmt.Sprintf("%04d-%02d-%02d", date.Year(), date.Month(), date.Day())
 
 	var events []*calendar.Event
-	rows, err := database.Db.Query(
+	rows, err := database.db.Query(
 		`SELECT * FROM events WHERE date(time) = ?;`, formattedDate,
 	)
 	if err != nil {
@@ -121,7 +121,7 @@ func (database *Database) GetEventsByDate(date time.Time) ([]*calendar.Event, er
 }
 
 func (database *Database) DeleteEvent(id int) error {
-	result, err := database.Db.Exec("DELETE FROM events WHERE id = ?", id)
+	result, err := database.db.Exec("DELETE FROM events WHERE id = ?", id)
 	if err != nil {
 		return err
 	}
@@ -139,7 +139,7 @@ func (database *Database) DeleteEvent(id int) error {
 }
 
 func (database *Database) DeleteEventsByName(name string) error {
-	tx, err := database.Db.Begin()
+	tx, err := database.db.Begin()
 	if err != nil {
 		return err
 	}
@@ -169,7 +169,7 @@ func (database *Database) DeleteEventsByName(name string) error {
 }
 
 func (database *Database) SaveNote(content string) error {
-    tx, err := database.Db.Begin()
+    tx, err := database.db.Begin()
     if err != nil {
         return err
     }
@@ -194,7 +194,7 @@ func (database *Database) SaveNote(content string) error {
 
 func (database *Database) GetLatestNote() (string, error) {
     var content string
-    err := database.Db.QueryRow(
+    err := database.db.QueryRow(
         "SELECT content FROM notes ORDER BY updated_at DESC LIMIT 1",
     ).Scan(&content)
     
@@ -202,4 +202,8 @@ func (database *Database) GetLatestNote() (string, error) {
         return "", nil
     }
     return content, err
+}
+
+func (database *Database) CloseDatabase() error {
+    return database.db.Close()
 }

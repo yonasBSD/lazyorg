@@ -29,7 +29,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer database.Db.Close()
+	defer database.CloseDatabase()
 
 	g, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
