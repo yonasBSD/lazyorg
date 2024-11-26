@@ -10,14 +10,21 @@ func quit(g *gocui.Gui, v *gocui.View) error {
 }
 
 func InitKeybindings(g *gocui.Gui, av *views.AppView) error {
+	g.InputEsc = true
+
 	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
 		return err
 	}
-    if err := g.SetKeybinding("", '?', gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
-        return av.ShowKeybinds(g)
-    }); err != nil {
-        return err
-    }
+	if err := g.SetKeybinding("", '?', gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
+		return av.ShowKeybinds(g)
+	}); err != nil {
+		return err
+	}
+	if err := g.SetKeybinding("", gocui.KeyEsc, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
+		return av.HandleEscape(g, v)
+	}); err != nil {
+		return err
+	}
 
 	if err := initMainKeybindings(g, av); err != nil {
 		return err
@@ -46,6 +53,7 @@ func initMainKeybindings(g *gocui.Gui, av *views.AppView) error {
 		{gocui.KeyCtrlN, func(g *gocui.Gui, v *gocui.View) error { return av.ChangeToNotepadView(g) }},
 		{gocui.KeyCtrlS, func(g *gocui.Gui, v *gocui.View) error { return av.ShowOrHideSideView(g) }},
 	}
+
 	for _, viewName := range views.WeekdayNames {
 		for _, kb := range mainKeybindings {
 			if err := g.SetKeybinding(viewName, kb.key, gocui.ModNone, kb.handler); err != nil {

@@ -155,6 +155,11 @@ func (av *AppView) ChangeToNotepadView(g *gocui.Gui) error {
 	if err != nil {
 		return err
 	}
+	if view, ok := av.FindChildView("notepad"); ok {
+		if notepadView, ok := view.(*NotepadView); ok {
+            notepadView.IsActive = true
+		}
+	}
 
 	return nil
 }
@@ -182,6 +187,11 @@ func (av *AppView) SaveNotepadContent(g *gocui.Gui) error {
 func (av *AppView) ReturnToMainView(g *gocui.Gui) error {
 	if err := av.SaveNotepadContent(g); err != nil {
 		return err
+	}
+	if view, ok := av.FindChildView("notepad"); ok {
+		if notepadView, ok := view.(*NotepadView); ok {
+            notepadView.IsActive = false
+		}
 	}
 
 	viewName := WeekdayNames[av.Calendar.CurrentDay.Date.Weekday()]
@@ -232,27 +242,45 @@ func (av *AppView) ShowPopup(g *gocui.Gui) error {
 	return nil
 }
 
+func (av *AppView) HandleEscape(g *gocui.Gui, v *gocui.View) error {
+	if view, ok := av.GetChild("popup"); ok {
+		if popupView, ok := view.(*EventPopupView); ok {
+			if popupView.IsVisible {
+				return popupView.Close(g, v)
+			}
+		}
+	}
+	if view, ok := av.FindChildView("notepad"); ok {
+		if notepadView, ok := view.(*NotepadView); ok {
+            if notepadView.IsActive {
+                return av.ReturnToMainView(g)
+            }
+		}
+	}
+	return nil
+}
+
 func (av *AppView) ShowKeybinds(g *gocui.Gui) error {
 	if view, ok := av.GetChild("keybinds"); ok {
 		if keybindsView, ok := view.(*KeybindsView); ok {
-            if keybindsView.IsVisible {
-                keybindsView.IsVisible = false
-                return g.DeleteView(keybindsView.Name)
-            }
+			if keybindsView.IsVisible {
+				keybindsView.IsVisible = false
+				return g.DeleteView(keybindsView.Name)
+			}
 
-            keybindsView.IsVisible = true
-            keybindsView.SetProperties(
-                av.X + (av.W-KeybindsWidth)/2,
-                av.Y + (av.H-KeybindsHeight)/2,
-                KeybindsWidth,
-                KeybindsHeight,
-                )
+			keybindsView.IsVisible = true
+			keybindsView.SetProperties(
+				av.X+(av.W-KeybindsWidth)/2,
+				av.Y+(av.H-KeybindsHeight)/2,
+				KeybindsWidth,
+				KeybindsHeight,
+			)
 
-            return keybindsView.Update(g)
+			return keybindsView.Update(g)
 		}
 	}
 
-    return nil
+	return nil
 }
 
 func (av *AppView) updateChildViewProperties() {
