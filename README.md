@@ -73,6 +73,9 @@ When creating a new event (`a`), you'll be prompted to fill in the following fie
 ### Global
 - `Ctrl+c` - Quit
 
+## Configuration
+
+Configuration file will come in future releases. For now, when you open the app for the first time, the database is created at `~/.local/share/lazyorg/data.db` in case you want to do a backup.
   
 ## Contributing
 Please feel free to submit a Pull Request!
@@ -90,8 +93,19 @@ Please feel free to submit a Pull Request!
 
 ## Roadmap
 
-- [ ] Modification of the range of time
-- [ ] Undo/Redo
+**Priorities - QoL/Bug fixes:**
+- [ ] Fix keybind help view in popup
+- [ ] Hover on event with overlapping events
+- [ ] Time range modification
+- [ ] New keybinds (`arrow keys`, `Shift+Tab`, `q` for closing the app)
+- [ ] Jump to today key
 - [ ] Event modification
-- [ ] Toggle buisness week vs calendar week
-- [ ] Keybinds rework
+- [ ] CLI help
+- [ ] Indicator for showing the time the cursor is at
+
+**New features:**
+- [ ] Undo/Redo
+- [ ] Configuration file
+- [ ] Toggle business week vs calendar week
+- [ ] Synchronization between devices
+- [ ] Import calendar from other apps (Google Calendar, Outlook)
