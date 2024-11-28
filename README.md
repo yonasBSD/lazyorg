@@ -94,14 +94,14 @@ Please feel free to submit a Pull Request!
 ## Roadmap
 
 **Priorities - QoL/Bug fixes:**
-- [ ] Fix keybind help view in popup
-- [ ] Hover on event with overlapping events
+- [x] Fix keybind help view in popup
+- [x] Hover on event with overlapping events
 - [ ] Time range modification
 - [ ] New keybinds (`arrow keys`, `Shift+Tab`, `q` for closing the app)
-- [ ] Jump to today key
+- [x] Jump to today key
 - [ ] Event modification
 - [ ] CLI help
-- [ ] Indicator for showing the time the cursor is at
+- [x] Indicator for showing the time the cursor is at
 
 **New features:**
 - [ ] Undo/Redo
