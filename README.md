@@ -97,9 +97,9 @@ Please feel free to submit a Pull Request!
 - [x] Fix keybind help view in popup
 - [x] Hover on event with overlapping events
 - [ ] Time range modification
-- [ ] New keybinds (`arrow keys`, `Shift+Tab`, `q` for closing the app)
+- [x] New keybinds (`arrow keys`, `q` for closing the app)
 - [x] Jump to today key
-- [ ] Event modification
+- [x] Event modification
 - [ ] CLI help
 - [x] Indicator for showing the time the cursor is at
 
