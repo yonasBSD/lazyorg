@@ -45,10 +45,8 @@ aurs:
       - glibc
       - sqlite
     package: |-
-      # Install binary
       install -Dm755 "./lazyorg" "${pkgdir}/usr/bin/lazyorg"
 
-      # Install documentation if present
       if [ -f "./LICENSE" ]; then
         install -Dm644 "./LICENSE" "${pkgdir}/usr/share/licenses/lazyorg/LICENSE"
       fi
