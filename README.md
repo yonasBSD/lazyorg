@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center" style="margin: 0;">
-  <img src="./logo.svg" alt="Lazyorg Logo" width="20%" style="display: inline-block;">
+  <img src="./assets/logo.svg" alt="Lazyorg Logo" width="20%" style="display: inline-block;">
 </p>
 
 <div align="center" style="font-size: 1.2rem; margin-top: 1rem; color: #555;">
@@ -13,7 +13,7 @@
 <hr style="margin: 2rem auto; width: 80%; border: 1px solid #ddd;">
 
 <p align="center">
-  <img src="./demo.gif" alt="Lazyorg Demo" width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+  <img src="./assets/demo.gif" alt="Lazyorg Demo" width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
 </p>
 
 
