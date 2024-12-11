@@ -93,19 +93,9 @@ Please feel free to submit a Pull Request!
 
 ## Roadmap
 
-**Priorities - QoL/Bug fixes:**
-- [x] Fix keybind help view in popup
-- [x] Hover on event with overlapping events
 - [ ] Time range modification
-- [x] New keybinds (`arrow keys`, `q` for closing the app)
-- [x] Jump to today key
-- [x] Event modification
 - [ ] CLI help
-- [x] Indicator for showing the time the cursor is at
-
-**New features:**
 - [ ] Undo/Redo
 - [ ] Configuration file
-- [ ] Toggle business week vs calendar week
 - [ ] Synchronization between devices
 - [ ] Import calendar from other apps (Google Calendar, Outlook)
