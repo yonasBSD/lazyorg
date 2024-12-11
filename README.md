@@ -103,6 +103,7 @@ Please feel free to submit a Pull Request!
 - Inspired by [lazygit](https://github.com/jesseduffield/lazygit)
 - Built with [gocui](https://github.com/jroimartin/gocui) TUI framework
 - Thanks to _defnotgustavom_ for the [docker image](https://hub.docker.com/r/defnotgustavom/lazyorg)
+- Thanks to [zeckrust](https://github.com/zeckrust) for the logo
 
 ## Roadmap
 
