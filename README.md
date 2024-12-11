@@ -99,3 +99,6 @@ Please feel free to submit a Pull Request!
 - [ ] Configuration file
 - [ ] Synchronization between devices
 - [ ] Import calendar from other apps (Google Calendar, Outlook)
+
+## Support Me
+<a href="https://www.buymeacoffee.com/hubertb" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
