@@ -1,8 +1,21 @@
-# Lazyorg
-A simple terminal-based calendar and note-taking application.
-<p align="center">
-  <img src="./demo.gif" alt="Lazyorg Demo" width="100%"/>
+<h1 align="center" style="font-size: 3rem; font-weight: bold; margin-bottom: 0.5rem;">
+  Lazyorg
+</h1>
+
+<p align="center" style="margin: 0;">
+  <img src="./logo.svg" alt="Lazyorg Logo" width="20%" style="display: inline-block;">
 </p>
+
+<div align="center" style="font-size: 1.2rem; margin-top: 1rem; color: #555;">
+  A simple terminal-based calendar and note-taking application.
+</div>
+
+<hr style="margin: 2rem auto; width: 80%; border: 1px solid #ddd;">
+
+<p align="center">
+  <img src="./demo.gif" alt="Lazyorg Demo" width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+</p>
+
 
 ## Features
 - 📅 Terminal-based calendar interface
