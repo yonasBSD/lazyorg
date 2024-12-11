@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center" style="margin: 0;">
-  <img src="./assets/logo.svg" alt="Lazyorg Logo" width="20%" style="display: inline-block;">
+  <img src="./assets/logo.svg" alt="Lazyorg Logo" width="25%" style="display: inline-block;">
 </p>
 
 <div align="center" style="font-size: 1.2rem; margin-top: 1rem; color: #555;">
