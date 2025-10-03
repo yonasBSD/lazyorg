@@ -41,6 +41,8 @@ func initMainKeybindings(g *gocui.Gui, av *views.AppView) error {
 		{'T', func(g *gocui.Gui, v *gocui.View) error { av.JumpToToday(); return nil }},
 		{'H', func(g *gocui.Gui, v *gocui.View) error { av.UpdateToPrevWeek(); return nil }},
 		{'L', func(g *gocui.Gui, v *gocui.View) error { av.UpdateToNextWeek(); return nil }},
+		{gocui.KeyPgdn, func(g *gocui.Gui, v *gocui.View) error { av.UpdateToPrevWeek(); return nil }},
+		{gocui.KeyPgup, func(g *gocui.Gui, v *gocui.View) error { av.UpdateToNextWeek(); return nil }},
 		{'d', func(g *gocui.Gui, v *gocui.View) error { av.DeleteEvent(g); return nil }},
 		{'D', func(g *gocui.Gui, v *gocui.View) error { av.DeleteEvents(g); return nil }},
 		{gocui.KeyCtrlN, func(g *gocui.Gui, v *gocui.View) error { return av.ChangeToNotepadView(g) }},
